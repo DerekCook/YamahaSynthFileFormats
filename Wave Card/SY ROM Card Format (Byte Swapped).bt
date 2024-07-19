@@ -1,0 +1,326 @@
+//----------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      SY ROM Card Format (Byte Swapped)
+// Author:    Derek Cook
+// Revision:  V3
+// Purpose:   Decoding of Yamaha SY85 WAVE ROM formats) it can also decode the SY77 Wave ROM!)
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//            This template is written to match the byte swapped variants of the ROM dump
+//
+//            The SY Wave card format is little endian
+//            This template assumes byte swapped data for ease of decoding
+//
+//            Take a copy of the BIN file you wish to run the template over and use the 010 Editor
+//              "Tools/Hex Operations/Swap..." menu command
+//
+//              With the "Treat Data as" option set to "Unsigned Short"
+//
+//----------------------------------------------------------------------------------------------------
+
+#define SAMPLE_ALIGNMENT    512
+#define FILE_ALIGNMENT   262144
+
+// Data definitions and associated Function prototypes for reading and displaying the data
+typedef uchar VOLUME <read=VOLUME_Read>;
+typedef uchar SAMPLE_ADDRESS[3] <read=SAMPLE_ADDRESS_Read>;
+typedef uchar PITCH <read=PITCH_Read>;
+typedef uchar ORIGINAL_KEY <read=ORIGINAL_KEY_Read>;
+
+//
+// Function for reading Sample volume and returning a string
+//
+// Note - Like the SY99, 0 is the loudest volume, 127 is the quietest, 
+// but the user interface displays it the other way around
+//
+
+string VOLUME_Read(VOLUME n) {
+
+    uint d =  127 - n;
+
+    string s;
+
+    SPrintf(s, "%3.3d",d);
+
+    return s;
+
+}
+
+//
+// Function for reading the pitch code
+//
+// Note this decoding may be strange, but it matches the pitch codes recorded for the W5501 card
+//
+
+string PITCH_Read(PITCH n) {
+
+    int d;
+
+    if ( n >= 0x80 ) {
+
+        d = -( n+ 471 );
+
+    } else {
+
+        d = ( n - 599 );
+
+    }
+
+    string s;
+
+    SPrintf(s, "%d",d);
+
+    return s;
+
+}
+
+//
+// Function for reading the original key (mask off the MSB to get the MIDI
+// note number
+//
+// It's uncertain why the ROM has the MS Bit set
+//
+
+string ORIGINAL_KEY_Read(PITCH n) {
+
+    int d = n & 0x7f;
+
+    string s;
+
+    SPrintf(s, "%2.2x",d);
+
+    return s;
+
+}
+
+//
+// Function for calculating a 24 bit Sample Address in bytes
+//
+// The 3 byte array is combined and mulitplied by 2 to convert from words to bytes
+//
+
+int CalculateSampleAddress(SAMPLE_ADDRESS n) {
+  
+  return ( ( ((ulong) n[0]) << 16) | ( ((ulong) n[1]) << 8) | ((ulong) n[2] ) ) * 2;
+  
+}
+
+//
+// Function for reading a 24 bit Sample Address
+//
+
+string SAMPLE_ADDRESS_Read(SAMPLE_ADDRESS n) {
+
+    string s;
+
+    SPrintf(s, "%6.6x",CalculateSampleAddress(n));
+
+    return s;
+
+}
+
+//
+// Function to calculate the start address of the sample block
+//
+// Samples are aligned on a 512 byte boundary.
+//
+
+int CalculateSampleStartAddress() {
+
+    local int header_size = sizeof(header);
+    local int block_size = 512;
+
+    local int number_of_blocks = header_size/block_size;
+
+    if ( ( header_size % block_size ) != 0 ) {
+
+        number_of_blocks += 1;
+
+    }
+
+    return number_of_blocks * block_size;
+
+}
+
+//
+// Function to calculate the number of pad bytes required
+// between the wave header block and the sample start address
+//
+
+int CalculateHeaderPadBytes() {
+
+    return CalculateSampleStartAddress() - sizeof(header);
+
+}
+
+//
+// Function to calculate the number of pad bytes required
+// between the wave header block and the sample start address
+//
+
+int CalculateFilePadBytes() {
+
+    return FILE_ALIGNMENT - (totalRequiredFileSize % FILE_ALIGNMENT);
+
+}
+
+// 
+// The sample block structure
+// This is required as 010 allows duplicate structs to be defined, but not duplicate arrays
+//
+
+struct WAVE_CARD_SAMPLE_BLOCK (int sampleLength) {
+
+  uchar sampleBlock[sampleLength];
+
+};
+
+// 
+// The sample pad structure
+// This is required as 010 allows duplicate structs to be defined, but not duplicate arrays
+//
+
+struct WAVE_CARD_SAMPLE_PAD(int padLength) {
+
+  uchar samplePad[padLength];
+
+};
+
+//
+// The header definition for samples
+//
+
+struct SAMPLE_HEADER {
+
+   VOLUME           volume;            // 0x00 is Volume 127
+   uchar            loop_mode;         // Apprears to be the same as SY99 loop modes
+   ORIGINAL_KEY     originalKey;       // Midi Key on D0:D6. D7 is range for pitch code. 
+   PITCH            pitch;             // The pitch code. Either -128 to +127 if ORIGINAL_KEY MSB is 0, or -727 to -470 if ORIGINAL_KEY MSB is 1
+   uchar            fixed1[10];        // Constant values
+   SAMPLE_ADDRESS   sampleStart;       // The start address of the sample (in words)
+   SAMPLE_ADDRESS   sampleLoopStart;   // The loop start address (in words)
+   uchar            sampleNumber;      // Or possibly index to something
+   SAMPLE_ADDRESS   sampleLoopEnd;     // The loop end address (in words)
+   uchar            unknown2;          // Always zero?
+   SAMPLE_ADDRESS   sampleEnd;         // The end address of the sample (in words), this is the last word in the sample, not one word ast it
+   uchar            fixed2[82];        // Constant values
+
+};
+
+//
+// The header definition for waves
+//
+
+struct WAVE_HEADER {
+
+    uchar    unknown1;                        // Unknown, sometimes non zero
+    uchar    numberOfSamples;                 // The number of samples in the wave
+    uchar    waveName[8];                     // The name of the wave
+    uchar    unknown2;                        // Unknown, always 0x20 (space)
+    uchar    waveDetune;                      // Either 0x20 or a detune factor
+    uchar    constant1[44];                   // A constant data block - Need to experiment with zeroing it
+    uchar    keymap[128];                     // The keymap for samples. Each entry is a MIDI note number with a sample number in it to play for the note
+    uchar    constant2[18];                   // A constant data block
+    uchar    nullPads[1280];                  // Always null
+    SAMPLE_HEADER samples[numberOfSamples];   // The header for each sample
+
+};
+
+//
+// The ROM_HEADER, which includes the wave and sample headers
+//
+
+struct ROM_HEADER {
+
+    uchar  unknown1[8];                                         // Varies for each card, but not sure what it is yet
+    ushort cardID;                                              // CARD ID
+    ushort cardSize;                                            // Memory size in 512 byte blocks
+    ushort numberOfWaves;                                       // Quite simply the number of waves in the ROM
+    char   headerName[10];                                      // The name of the ROM Card
+    uchar  pad[8];                                              // Pad bytes
+    long   waveHeaderAddress[numberOfWaves];                    // Address for each wave header, given in 16 bit words; multiply by 2 to get a byte address
+    WAVE_HEADER waveheaders[numberOfWaves] <optimize=false>;    // The headers for each wave
+
+};
+
+//
+// Local variables for calculations (these do not appear in the Template Results)
+//
+
+local int i;
+local int j;
+local int sampleStart;
+local int sampleEnd;
+local int sampleLength;
+local int samplePadLength;
+local int totalRequiredFileSize;
+local int totalFileSize;
+local int totalNumberOfSamples = 0;
+local int totalSampleSize = 0;
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// The template itself, using all of the above definitons!
+// Data is big endian
+
+BigEndian();
+
+ROM_HEADER header;                                 // The header data and wave/sample definitions
+uchar headerPadBytes[CalculateHeaderPadBytes()];   // Pad bytes to align to 512 byte boundary
+
+// Now scan through the wave headers to create the sample blocks
+// This shows the power of 010 Editor Templates to dynamically create structures based on parsing the file!
+
+for ( i = 0; i < header.numberOfWaves; i += 1 ) {
+
+  // Now scan through the sample headers in the wave headers
+  for ( j = 0; j < header.waveheaders[i].numberOfSamples; j += 1 ) {
+    
+    // Calculate the required parameters (noting we need to convert from 3 byte 24 bit values to ints)
+    sampleStart  = CalculateSampleAddress(header.waveheaders[i].samples[j].sampleStart);
+    sampleEnd    = CalculateSampleAddress(header.waveheaders[i].samples[j].sampleEnd);
+    sampleLength = sampleEnd - sampleStart + 2;
+    samplePadLength    = SAMPLE_ALIGNMENT - ( ( sampleEnd + 2 ) % SAMPLE_ALIGNMENT);
+
+    // Define the sample block and the sample pad to the next boundary    
+    WAVE_CARD_SAMPLE_BLOCK sampleBlock(sampleLength);
+    WAVE_CARD_SAMPLE_PAD   samplePad(samplePadLength);
+    
+    // Add to the totals
+    totalNumberOfSamples += 1;
+    totalSampleSize += sampleLength + samplePadLength; 
+    
+    // Some debug statements. Uncomment if needed
+    //Printf("Wave %3d\n", i);
+    //Printf("  Sample %3d\n", j);
+    //Printf("    Sample Start      : 0x%8.8x\n", sampleStart);
+    //Printf("    Sample End        : 0x%8.8x\n", sampleEnd);
+    //Printf("    Sample Length     : %d\n"     , sampleLength);
+    //Printf("    Sample Pad Length : %d\n\n"   , samplePadLength);
+    
+  }
+  
+} 
+
+totalRequiredFileSize = sizeof(header) + CalculateHeaderPadBytes() + totalSampleSize;
+totalFileSize = totalRequiredFileSize + CalculateFilePadBytes();
+
+uchar filePad[CalculateFilePadBytes()];
+  
+//
+// End of BIN File
+//
+
+//
+// Some information to display when running the template
+//
+
+Printf("Number of Waves in File is    : %d\n"        ,header.numberOfWaves);
+Printf("Number of Samples in File is  : %d\n"        ,totalNumberOfSamples);
+Printf("Size of Header Structure is   : %8.8x (%d)\n",sizeof(header),sizeof(header));
+Printf("Number of header pad bytes is : %8.8x (%d)\n",CalculateHeaderPadBytes(),CalculateHeaderPadBytes());
+Printf("Sample Start Address is       : %8.8x\n"     ,CalculateSampleStartAddress());
+Printf("Total Sample Size in File is  : %8.8x (%d)\n",totalSampleSize,totalSampleSize);
+Printf("Total Required File Size is   : %8.8x (%d)\n",totalRequiredFileSize,totalRequiredFileSize);
+Printf("File Pad Size is              : %8.8x (%d)\n",CalculateFilePadBytes(),CalculateFilePadBytes());
+Printf("Total File Size is            : %8.8x (%d)\n",totalFileSize,totalFileSize);
