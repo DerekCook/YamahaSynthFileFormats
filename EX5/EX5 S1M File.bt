@@ -1,0 +1,263 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1M
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1M File Format which contains waves, wave layers
+//            sample headers and sample data
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+//
+// Decimal constant definitions
+//
+
+#define S1M_HEADER_FILE_ID_LENGTH          16
+#define S1M_HEADER_RESERVED_LENGTH        111
+#define S1M_NUMBER_OF_WAVES              1024
+#define S1M_NUMBER_OF_WAVE_LAYERS        1024
+#define S1M_WAVE_NAME_LENGTH                8
+#define S1M_WAVE_SIZE                      12
+#define S1M_WAVE_LAYER_SIZE                18
+#define S1M_SAMPLE_NAME_LENGTH              8
+#define S1M_NUMBER_OF_SAMPLES            1024
+
+//
+// Hexadecimal constant definitions
+//
+
+#define S1M_SAMPLE_BLOCK_START_ADDRESS   0x00011086
+
+//
+// Calculated definitions
+//
+// Note the 010 Template preprocessor does not seem to like line splits in preprocessor definitions
+//
+
+// The EX5 has space for 1024 waves and 1024 layers
+#define S1M_MAXIMUM_SIZE_OF_WAVE_BLOCK  ( (S1M_NUMBER_OF_WAVES * S1M_WAVE_SIZE ) + (S1M_NUMBER_OF_WAVE_LAYERS * S1M_WAVE_LAYER_SIZE ) )
+
+// 
+// The S1M file header
+//
+
+struct S1M_HEADER {
+
+    uchar  FileID[S1M_HEADER_FILE_ID_LENGTH];     // The file ID for S1M files
+    uchar  reserved[S1M_HEADER_RESERVED_LENGTH];  // reserved block of zero bytes
+    uchar  memoryConfiguration;                   // Amount of DRAM memory in words required over and above 0.5 MW installed
+                                                  //   00h: none  
+                                                  //   04h: DRAM 4M  
+                                                  //   08h: DRAM 8M 
+                                                  //   10h DRAM 16M 
+                                                  //   20h DRAM 32M
+                                                  // Flash Size required. Bits are zero if S1M will not fit in FLASH
+                                                  // If 8M is required both 4M and 8M flags must be set
+                                                  //   40h: FLASH 4M  
+                                                  //   80h: FLASH 8M
+                                             
+};
+
+//
+// The wave layer structure
+//
+
+struct S1M_LAYER {
+  
+  // WORD Bitfield - this data is contained in a single word
+  WORD  sampleNumber : 14;          // D00-D13 = Sample number
+  WORD  sampleBank   : 2;           // D14-D15 = sampleBank. 0 = ROM, 1 = DRAM, 2 = FLASH
+   	uchar volume;	uchar alternateGroup;	uchar noteLowLimit;	uchar noteHighLimit;	uchar velocityLowLimit;	uchar velocityHighLimit;
+   
+  // uchar Bitfield - this data is contained in a single byte	uchar pan           : 7;          // D0-D6 = pan	uchar frequencyMode : 1;          // D7    = frequency mode. 0 = ratio, 1 = fixed
+   	uchar tuneCoarse;	uchar tuneFine;
+  
+  // Loop Mode
+  // 0x10 = Forward Loop
+  // 0x90 = Forward Loop Ex
+  // 0x50 = Forward No Loop
+  // 0x30 = Reverse No Loop
+  // 0x20 = default	uchar loopMode;                 
+  	WORD  startAddressOffset; // -32768 - +32767 2's Comp	WORD  attackLengthOffset; // -32768 - +32767 2's Comp	WORD  looplengthOffset;   // -32768 - +32767 2's Comp
+   
+};
+
+// 
+// The wave structure
+//
+
+struct S1M_WAVE {
+
+  uchar name[S1M_WAVE_NAME_LENGTH];
+  uchar reserved1;
+  uchar numberOfLayers;
+  uchar reserved2;
+  uchar category;
+  
+  S1M_LAYER layers[numberOfLayers];
+  
+};
+
+// 
+// The sample header structure
+//
+
+struct S1M_SAMPLE_HEADER {
+
+  uchar name[S1M_SAMPLE_NAME_LENGTH];
+  uchar category;
+  uchar sampleType;
+  uchar sampleLoopStartAddress[3]; // 24 bit value
+    
+  // uchar Bitmap - this data is contained in a single byte 
+  uchar loopFraction : 6;
+  uchar oneShot      : 1;
+  uchar port         : 1;
+  
+  uchar sampleAttackLength[3]; // 24 bit value
+  
+  // uchar Bitmap - this data is contained in a single byte
+  uchar loopTune : 7;
+  uchar reverse  : 1;
+  
+  uchar sampleLoopLength[3];        // 24 bit value
+  
+  uchar centreKey;
+  
+  uchar sampleStartLength[3];       // 24 bit value
+  uchar sampleReleaseLoopLength[3]; // 24 bit value
+  
+  WORD sampleNumber;                // the link to which sample this sample header is using 
+                                    // 0xffff means no sample is being used (e.g. a "NewSampl")
+
+};
+
+// 
+// The sample block structure
+// This is required as 010 allows duplicate structs to be defined, but not duplicate arrays
+//
+
+struct S1M_SAMPLE_BLOCK (int sampleLength) {
+
+  uchar sampleBlock[sampleLength];
+
+};
+
+// Function to calculate the number of Waves
+// by looking for addresses in the waveformPointers block that are not 0xffffffff
+//
+
+int CalculateNumberofWaves() {
+
+    local int numberOfWaves = 0;
+    local int i;
+
+    for ( i = 0; i < S1M_NUMBER_OF_WAVES; i += 1 ) {
+    
+        if (waveformPointers[i] != 0xffffffff) {
+        
+          numberOfWaves +=1 ;
+          
+        }
+      
+    }
+
+    return numberOfWaves;
+
+}
+
+// Function to calculate the unused wave block size
+// 
+
+int CalculateUnusedWaveBlockSize() {
+
+  return S1M_MAXIMUM_SIZE_OF_WAVE_BLOCK - 
+         ( ( CalculateNumberofWaves() * S1M_WAVE_SIZE ) + ( numberOfLayers * S1M_WAVE_LAYER_SIZE ) );
+  
+}
+
+// Function to calculate the the pad byte amount from the end of 
+// the samples to the the next 128 byte boundary
+// 
+
+int CalculatePadBlockSize() {
+  
+  return ( 128 - ( ( S1M_SAMPLE_BLOCK_START_ADDRESS + totalSampleSize ) % 128 ) );
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+// And now the S1M template itself, using all of the above definitons!
+// Data is big endian
+
+BigEndian();
+
+// The header data
+S1M_HEADER  header;                                 
+
+// AThe address of the null wave (address offset from top of wave data)
+// Efeectively, this is the size of the activeWaveBlock
+DWORD       nullWaveAddress;     
+
+// the total number of layers used in all active waves (1024 max)
+WORD        numberOfLayers;                         
+
+// The waveform pointer offsets in the waveform block. 0xffff = no waveform.
+// These are indexes into the activeWaveBlock to access the start of the wave
+// Note that active waves may not be contigious
+DWORD       waveformPointers[S1M_NUMBER_OF_WAVES];  
+
+// The waves which are active
+S1M_WAVE    activeWaveBlock[CalculateNumberofWaves()] <optimize=false>;
+
+// You need to pad out the unused wave block to get to the samples, as the total wave block is a fixed size
+// Note although this block may appear to contain data, it may be old wave data that has been deleted
+uchar       inactiveWaveBlock[CalculateUnusedWaveBlockSize()];       
+
+// Sample Headers
+S1M_SAMPLE_HEADER sampleHeaders[S1M_NUMBER_OF_SAMPLES];
+
+// Now the sizes of the samples. 
+DWORD sampleSizes[S1M_NUMBER_OF_SAMPLES];
+
+// Now the sample data blocks. This shows the power of 010 Editor Templates to 
+// dynamically create structures based on parsing the file!
+
+// Local variables for calculation (these do not appear in the Template Results)
+local int i = 0;
+local int totalNumberOfSamples;
+local int totalSampleSize = 0;
+
+for ( i = 0; i < S1M_NUMBER_OF_SAMPLES; i += 1 ) {
+
+  // Only add a sample block to the templateif the sample size is non zero
+  if ( sampleSizes[i] > 0 ) {
+  
+    S1M_SAMPLE_BLOCK sampleBlock(sampleSizes[i]);
+    
+    totalNumberOfSamples += 1;
+    totalSampleSize      += sampleSizes[i]; 
+    
+  }
+  
+} 
+
+// Now we need to pad the file up to the next 128 byte boundary
+uchar padBlock[CalculatePadBlockSize()];
+
+//
+// End of S1M File
+//
+
+//
+// Some information to display when running the template
+//
+
+Printf("The Number of Waves         is : %d\n",CalculateNumberofWaves());
+Printf("The Number of Layers        is : %d\n",numberOfLayers);
+Printf("The Total Number of Samples is : %d\n",totalNumberOfSamples);
+Printf("The Total Sample Size       is : %d\n",totalSampleSize);
+Printf("The Padblock Size           is : %d\n",CalculatePadBlockSize());
