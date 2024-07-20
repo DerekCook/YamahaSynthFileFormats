@@ -194,6 +194,7 @@ int CalculatePadBlockSize() {
 // Data is big endian
 
 BigEndian();
+BitfieldRightToLeft();
 
 // The header data
 S1M_HEADER  header;                                 
