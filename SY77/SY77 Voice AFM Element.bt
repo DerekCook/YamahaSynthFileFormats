@@ -1,0 +1,61 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: Yamaha SY77 Voice AFM Element.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 Voice AFM Element data structures
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef SY77_VOICE_AFM_ELEMENT_BT
+#define SY77_VOICE_AFM_ELEMENT_BT
+
+  // Includes  
+  
+  #include "SY77 Effect.bt"
+
+  //
+  // SY77 Voice AFM Element Operator
+  //
+  
+  typedef struct {
+    
+	  ubyte egKeyOnRate1;	  ubyte egKeyOnRate2;	  ubyte egKeyOnRate3;	  ubyte egKeyOnRate4;	  ubyte egKeyOffRate1;	  ubyte egKeyOffRate2;	  ubyte egKeyOnLevel1;	  ubyte egKeyOnLevel2;	  ubyte egKeyOnLevel3;	  ubyte egKeyOnLevel4;	  ubyte egKeyOffLevel1;	  ubyte egKeyOffLevel2;	  ubyte egSustainLoopPoint;	  ubyte egKeyOnHoldTime;	  ubyte egKeyOnLevel0;	  ubyte egRateScaling;	  ubyte egAmplitudeModulationSensitivity;	  ubyte egVelocitySensitivity;	  ubyte reserved;
+    
+    // 1 byte bit field	  ubyte oscillatorInputSource0 : 4;	  ubyte oscillatorInputSource1 : 4;
+        // 1 byte bit field	  ubyte oscillatorOutputDestination : 2;	  ubyte outAccumulatorInputSource0  : 2;	  ubyte outAccumulatorInputSource1  : 1;
+	  ubyte unusedBits1                 : 3;    
+    // 1 byte bit field  	  ubyte oscillatorInputShiftValue0  : 3;	  ubyte oscillatorInputShiftValue1  : 3;	  ubyte unusedBits2                 : 2;
+  
+	  ubyte outputLevelCorrection;	  ubyte oscillatorWaveform;
+  
+    // 1 byte bit field	  ubyte frequencyMode                  : 1;
+	  ubyte pitchEgSwitch                  : 1;	  ubyte mLfoPitchModulationSensitivity : 3;	  ubyte unusedBits3                    : 3;    	  ubyte initialOscillatorPhase         : 7;
+    ubyte initialPhaseSetEnable          : 1;  	  ubyte pitchDetune;	  ubyte outputLevel;
+    	  ubyte outputLevelScalingBreakPoint1;	  ubyte outputLevelScalingBreakPoint2;	  ubyte outputLevelScalingBreakPoint3;	  ubyte outputLevelScalingBreakPoint4;	  
+    ubyte outputLevelScalingOffset1;	  ubyte outputLevelScalingOffset2;	  ubyte outputLevelScalingOffset3;	  ubyte outputLevelScalingOffset4;
+    	  ubyte rateVelocitySwitch;	  ubyte frequencyCourse;	  ubyte frequencyFine;	    
+  } SY77_VOICE_AFM_ELEMENT_OPERATOR;
+  
+  //
+  // SY77 Voice AFM Element 
+  //
+  
+  typedef struct {
+    
+    SY77_VOICE_AFM_ELEMENT_OPERATOR operators[SY77_AFM_ELEMENT_NUMBER_OF_OPERATORS];
+    
+    ubyte algorithm;
+    
+    SY77_VOICE_ELEMENT_PITCH_EG pitchEg;
+    SY77_VOICE_ELEMENT_MAIN_LFO mainLfo;
+    SY77_VOICE_ELEMENT_SUB_LFO  subLfo;
+    SY77_VOICE_ELEMENT_FILTERS  filters;  
+    
+  } SY77_VOICE_AFM_ELEMENT;
+  
+#endif

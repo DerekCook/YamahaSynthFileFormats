@@ -1,0 +1,89 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: Yamaha SY77 Voice.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 Voice data structures
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef SY77_VOICE_BT
+#define SY77_VOICE_BT
+
+  // Includes
+  
+  #include "SY77 Voice Type.bt"
+  #include "SY77 Voice Functions.bt"
+  #include "SY77 Voice Element Pitch EG.bt"
+  #include "SY77 Voice Element LFO.bt"
+  #include "SY77 Voice Element Filter.bt"
+  #include "SY77 Voice AWM Element.bt"
+  #include "SY77 Voice AFM Element.bt"
+  #include "SY77 Voice Element.bt"
+  #include "SY77 Voice Controllers.bt"
+  
+  //
+  // SY77 Voice
+  //
+  
+  typedef struct {
+  
+    SY77_VOICE_TYPE            type;
+    uchar                      name[SY77_VOICE_NAME_LENGTH];
+    
+    SY77_EFFECTS               effects;
+  
+    SY77_VOICE_CONTROLLERS     controllers;
+    
+    if ( type != SY_VOICE_TYPE_DRUM ) {
+      
+      ubyte microTuningTableSelect;	    ubyte randomPitchFluctuation;	    ubyte portamentoMode;	    ubyte portamentoTime;	    ubyte individualOutputSelect; /* TG77 only */	    ubyte volume;	    ubyte unknown1;  	  ubyte unknown2;
+  
+      SY77_VOICE_ELEMENT_HEADERS elementHeaders;
+      
+    } else {
+      
+      ubyte reserved1;
+      ubyte reserved2;
+      ubyte reserved3;
+      ubyte reserved4;
+      ubyte reserved5;
+      ubyte reserved6;
+      ubyte reserved7;
+      ubyte reserved8;
+      
+    }
+      
+    SY77_VOICE_ELEMENTS        elements;
+        
+  } SY77_VOICE;
+  
+  //
+  // SY77 Small Voice data block (including file padding)
+  //
+  
+  typedef struct {
+  
+    SY77_VOICE  voice;
+    
+    ubyte       pad[CalculateSmallVoicePadBytes(voice.type)];
+    
+  } SY77_SMALL_VOICE;
+  
+  //
+  // SY77 Large Voice data block (including file padding)
+  //
+  
+  typedef struct {
+  
+    SY77_VOICE  voice;
+    
+    ubyte       pad[CalculateLargeVoicePadBytes(voice.type)];
+    
+  } SY77_LARGE_VOICE;
+
+#endif

@@ -1,0 +1,50 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: Yamaha SY77 Multi.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 Multi data structures
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef SY77_MULTI_BT
+#define SY77_MULTI_BT
+
+  // Includes
+   
+  #include "SY77 Effect.bt"
+  
+  // definitions
+  
+  #define SY77_NUMBER_OF_MULTI_PARTS 16
+  
+  //
+  // The Multi Part structure
+  //
+  
+  typedef struct {
+  
+	  ubyte switches;	  ubyte voiceMemorySelect;	  ubyte voiceNumber;	  ubyte volume;	  ubyte tuning;	  ubyte noteShift;	  ubyte multiStaticPan;
+  } SY77_MULTI_PART;
+  
+  //
+  // The Multi structure
+  //
+  
+  typedef struct {
+  
+    uchar name[SY77_MULTI_NAME_LENGTH];
+      
+    SY77_EFFECTS effects;
+      
+    ubyte reserved1;	  ubyte reserved2;	  ubyte reserved3;	  ubyte reserved4;	  ubyte reserved5;	  ubyte reserved6;	  ubyte reserved7;	  ubyte reserved8;	  ubyte reserved9;
+        
+    SY77_MULTI_PART parts[SY77_NUMBER_OF_MULTI_PARTS];
+  
+  } SY77_MULTI;
+
+#endif

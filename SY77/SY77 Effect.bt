@@ -1,0 +1,59 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: Yamaha SY77 Effect.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 Effect data structures
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef SY77_EFFECT_BT
+#define SY77_EFFECT_BT
+
+  // definitions
+  
+  #define SY77_NUMBER_OF_CHORUS_EFFECTS 2
+  #define SY77_NUMBER_OF_REVERB_EFFECTS 2
+  
+  //
+  // The Chorus Effect structure
+  //
+  
+  typedef struct {
+  
+	  byte effectType;	  byte balance;	  byte outputLevel;	  byte parameter1;	  byte parameter2;	  byte parameter3;
+	  byte parameter4;
+      
+  } SY77_CHORUS_EFFECT;
+  
+  //
+  // The Reverb Effect structure
+  //
+  
+  typedef struct {
+  
+	  byte effectType;	  byte balance;	  byte outputLevel;	  byte parameter1;	  byte parameter2;	  byte parameter3;
+      
+  } SY77_REVERB_EFFECT;
+  
+  //
+  // The Effects structure
+  //
+  
+  typedef struct {
+  
+	  byte effectMode;
+    
+    SY77_CHORUS_EFFECT chorusEffect1;
+    SY77_CHORUS_EFFECT chorusEffect2;
+    
+    SY77_REVERB_EFFECT reverbEffect1;
+    SY77_REVERB_EFFECT reverbEffect2;
+    	  byte stereoMix1;	  byte stereoMix2;      
+  } SY77_EFFECTS;
+  
+#endif

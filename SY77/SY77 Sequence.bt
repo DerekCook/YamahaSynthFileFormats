@@ -1,0 +1,196 @@
+//------------------------------------------------
+// 010 Editor v8.0 Binary Template
+//
+// File: Yamaha SY77 KNN Sequence.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 KNN Sequence File Format
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef SY77_SEQUENCE_BT
+#define SY77_SEQUENCE_BT
+
+  // Defines
+
+  #define SY77_SEQUENCE_NAME_LENGTH                 8
+  #define SY77_SEQUENCE_NUMBER_OF_TRACKS           16
+  #define SY77_SEQUENCE_NUMBER_OF_BARS            999
+  #define SY77_SEQUENCE_NUMBER_OF_PATTERNS         99
+  #define SY77_SEQUENCE_NUMBER_OF_PATTERN_CHAINS  999
+  #define SY77_SEQUENCE_PAD_LENGTH                112
+  
+  //
+  // A two byte field where each bit indicates if a track is active or not
+  //
+  // Note that this value is little endian
+  //
+  
+  typedef struct {
+    
+    LittleEndian();
+    
+    ushort activeTrack1  : 1;
+    ushort activeTrack2  : 1;
+    ushort activeTrack3  : 1;
+    ushort activeTrack4  : 1;
+    ushort activeTrack5  : 1;
+    ushort activeTrack6  : 1;
+    ushort activeTrack7  : 1;
+    ushort activeTrack8  : 1;
+    ushort activeTrack9  : 1;
+    ushort activeTrack10 : 1;
+    ushort activeTrack11 : 1;
+    ushort activeTrack12 : 1;
+    ushort activeTrack13 : 1;
+    ushort activeTrack14 : 1;
+    ushort activeTrack15 : 1;
+    ushort unused        : 1;
+    
+    BigEndian();
+    
+  } ACTIVE_TRACKS;
+  
+  //
+  // A structure for representing a 24 but value
+  //
+  // Note the bit field padding control below is a way of getting a 24 bit data field over 3 bytes
+  //
+
+  typedef struct {
+    
+    BigEndian();
+    BitfieldDisablePadding();
+    
+    uint value : 24;
+    
+    BitfieldEnablePadding();
+
+  } TWENTY_FOUR_BIT_VALUE;
+  
+  //
+  // SY77 Sequence Pattern Chain
+  //
+  // Bit D7 indicates CHAIN
+  // 
+  // If Bit D7 is not set and Bits D0-D6 are less than 99 then this is a reference to a Pattern (zero indexed)
+  // 
+  // If Bit D7 is set and Bits D6-D0 are zero then this is the start of a pattern chain ( ||: )
+  // 
+  // If Bit D7 is set and Bits D6-D0 are non zero then this is the end of a pattern chain and the repeat value ( :|| )
+  // 
+  // If Bit D7-D0 are all set them this indicates the end of the patten chain
+  // 
+  
+  typedef struct {
+
+    ubyte patternOrRepeat : 7;
+    ubyte chain           : 1;
+     
+  } SY77_SEQUENCE_PATTERN_CHAIN;
+
+  //
+  // SY77 Sequence Pattern Header
+  //
+  
+  typedef struct {
+    
+    ubyte                 patternActive;
+    ubyte                 timeSignature;    ubyte                 numberOfMeasures;    
+    TWENTY_FOUR_BIT_VALUE patternStart;
+    TWENTY_FOUR_BIT_VALUE patternEnd;
+     
+  } SY77_SEQUENCE_PATTERN;
+  
+  //
+  // Sequencer Track Data
+  //
+  
+  typedef struct (int trackLength ) {
+    
+    ubyte trackData[trackLength];
+    
+  } SY77_SEQUENCER_TRACK;
+  
+  
+  // Includes (define late as we need some of the structure definitions)
+  #include "SY77 Sequence Functions.bt"  
+  
+  //
+  // SY77 Sequence
+  //
+  
+  typedef struct {
+    
+    local int i;
+
+    BigEndian();
+
+    ubyte                       header[SY77_HEADER_LENGTH];
+    
+    ubyte                       unknown1; 	  ubyte                       unknown2;	  ubyte                       unknown3;	  ubyte                       unknown4;	  ubyte                       unknown5;	  ubyte                       unknown6;	  ubyte                       unknown7;	  ubyte                       unknown8;	  ubyte                       unknown9;	  ubyte                       unknown10;	  ubyte                       unknown11;	  ubyte                       unknown12;	  ubyte                       tempo;	  ubyte                       unknown13;	  ubyte                       unknown14;	  ubyte                       unknown15;
+           	  ushort                      numberOfMeasures;
+    
+    uchar                       sequenceName[SY77_SEQUENCE_NAME_LENGTH];
+    
+    ACTIVE_TRACKS               activeTracks;
+    
+	  ubyte                       trackMidi1Channel;	  ubyte                       trackMidi2Channel;	  ubyte                       trackMidi3Channel;	  ubyte                       trackMidi4Channel;	  ubyte                       trackMidi5Channel;	  ubyte                       trackMidi6Channel;	  ubyte                       trackMidi7Channel;	  ubyte                       trackMidi8Channel;	  ubyte                       trackMidi9Channel;	  ubyte                       trackMidi10Channel;	  ubyte                       trackMidi11Channel;	  ubyte                       trackMidi12Channel;	  ubyte                       trackMidi13Channel;	  ubyte                       trackMidi14Channel;	  ubyte                       trackMidi15Channel;	  ubyte                       trackMidi16Channel;    
+    ubyte                       timeSignatures[SY77_SEQUENCE_NUMBER_OF_BARS];
+    
+    TWENTY_FOUR_BIT_VALUE       patternDataLength;
+    
+    SY77_SEQUENCE_PATTERN       patterns[SY77_SEQUENCE_NUMBER_OF_PATTERNS] <optimize=false>;
+     
+    SY77_SEQUENCE_PATTERN_CHAIN patternChains[SY77_SEQUENCE_NUMBER_OF_PATTERN_CHAINS] <optimize=false>;  
+    
+    ubyte                       unknown16;
+    
+    ushort                      patternChainLength;
+     
+    ubyte                       unknown17;
+    ubyte                       unknown18;
+    ubyte                       unknown19;
+    ubyte                       unknown20;
+    ubyte                       unknown21;
+    
+    ubyte                       pad[SY77_SEQUENCE_PAD_LENGTH];
+      
+    // The main sequence tracks - only where tracks are active
+    for (i = 0; i < SY77_SEQUENCE_NUMBER_OF_TRACKS; i += 1 ) {
+    //for (i = 0; i < 1; i += 1 ) {
+      
+      if ( getTrackActiveStatus(activeTracks,i) > 0 ) {
+      
+        // Uncomment if you want some debug info
+        //Printf("Track %d is active\n",i+1);
+        
+        SY77_SEQUENCER_TRACK track(findTrackLength());
+        
+      }
+    
+    }
+    
+    // Pattern tracks - only where patterns are active   
+    for (i = 0; i < SY77_SEQUENCE_NUMBER_OF_PATTERNS; i += 1 ) {
+      
+      if ( patterns[i].patternActive > 0 ) {
+      
+        SY77_SEQUENCER_TRACK patternTrack(findTrackLength());        
+        
+      }
+      
+    }
+    
+    // The end of sequence data is marked by 0xF1
+    ubyte endOfSequenceData;
+    
+    // Files are padded with 0xF8 to the next 1024 byte boundary
+    ubyte padToEndOfFile[CalculateFilePadBytes()];
+       
+  } SY77_SEQUENCE;
+
+#endif

@@ -1,0 +1,31 @@
+//------------------------------------------------
+// 010 Editor v8.0 Binary Template
+//
+// File: Yamaha SY77 KNN.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 KNN File Format
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+// Include files. 
+
+#include "SY77 Common.bt"
+
+#include "SY77 Sequences.bt"
+
+//
+// The KNN File structure
+//
+ 
+struct SY77_KNN_FILE {
+
+  ubyte           header[SY77_HEADER_LENGTH];
+  ubyte           pad1[SY77_PAD_1_LENGTH];
+
+  SY77_SEQUENCES  sequences;    
+        
+} knn_file;

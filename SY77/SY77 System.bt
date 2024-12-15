@@ -1,0 +1,26 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: Yamaha SY77 System.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 System data structure
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef SY77_SYSTEM_BT
+#define SY77_SYSTEM_BT
+
+  #define SY77_WELCOME_MESSAGE_LENGTH 40
+  
+  typedef struct {
+    
+    uchar welcomeMessage[SY77_WELCOME_MESSAGE_LENGTH];  
+    
+    ubyte masterNoteShift;    ubyte masterFineTuning;    ubyte fixedVelocity;    ubyte velocityCurve;    ubyte modWheel2ControllerAssign;    ubyte footSwitchAssign;    ubyte editConfirmSwitch;    ubyte keyboardTransmitChannel;    ubyte voiceReceiveChannel;    ubyte localSwitch;    ubyte deviceNumber;    ubyte noteEvenOddSwitch;    ubyte bulkDataMemoryProtectSwitch;    ubyte programChangeMode;    ubyte reserved1;    ubyte bulkDataPatternProtectSwitch;    ubyte controllerHold;    ubyte mdrMemoryAllocation;    ubyte reserved2;    ubyte reserved3;    ubyte reserved4;    ubyte reserved5;    ubyte reserved6;    ubyte reserved7;    
+  } SY77_SYSTEM_SETTINGS;
+
+#endif

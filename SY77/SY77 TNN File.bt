@@ -1,0 +1,70 @@
+//------------------------------------------------
+// 010 Editor v8.0 Binary Template
+//
+//  File: Yamaha SY77 TNN.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 TNN File Format
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+// Include files. 
+
+#include "SY77 Common.bt"
+#include "SY77 System.bt"
+#include "SY77 Microtuning.bt"
+#include "SY77 Pan.bt"
+#include "SY77 Multi.bt"
+#include "SY77 Voice.bt"
+
+#include "SY77 Sequences.bt"
+
+//
+// The TNN File structure
+//
+ 
+struct SY77_TNN_FILE {
+
+  ubyte                 header[SY77_HEADER_LENGTH];
+  ubyte                 pad1[SY77_PAD_1_LENGTH];
+  
+  SY77_SYSTEM_SETTINGS  systemSettings;
+  
+  ubyte                 pad2[SY77_PAD_2_LENGTH];
+  
+  SY77_MICROTUNING      userMicrotunings[SY77_NUMBER_OF_MICROTUNINGS];
+  SY77_MICROTUNING      hiddenMicrotunings[SY77_NUMBER_OF_HIDDEN_MICROTUNINGS];
+  
+  ubyte                 pad3[SY77_PAD_3_LENGTH];
+  
+  SY77_PAN              userPans[SY77_NUMBER_OF_PANS];
+  SY77_PAN              hiddenPans[SY77_NUMBER_OF_HIDDEN_PANS];
+  
+  ubyte                 pad4[SY77_PAD_4_LENGTH];
+  
+  SY77_MULTI            multis[SY77_NUMBER_OF_MULTIS];
+  
+  ubyte                 pad5[SY77_PAD_5_LENGTH];
+  
+  SY77_SMALL_VOICE      smallVoices[SY77_NUMBER_OF_SMALL_VOICES] <optimize=false>;
+  
+  ubyte                 pad6[SY77_PAD_6_LENGTH];
+  
+  SY77_LARGE_VOICE      largeVoices[SY77_NUMBER_OF_LARGE_VOICES] <optimize=false>;
+  
+  ubyte                 pad7[SY77_PAD_7_LENGTH];
+  
+  VOICE_NAME            voiceNames[SY77_NUMBER_OF_VOICES];
+  MULTI_NAME            multiNames[SY77_NUMBER_OF_MULTIS];
+  
+  ubyte                 pad8[SY77_PAD_8_LENGTH];
+
+  ubyte                 knnHeader[SY77_HEADER_LENGTH];
+  ubyte                 knnPad1[SY77_PAD_1_LENGTH];
+
+  SY77_SEQUENCES        sequences;    
+    
+} tnn_file;

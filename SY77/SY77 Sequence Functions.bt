@@ -1,0 +1,126 @@
+//------------------------------------------------
+// 010 Editor v8.0 Binary Template
+//
+// File: Yamaha SY77 KNN Sequence Functions.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 KNN Sequence functions
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef SY77_SEQUENCE_FUNCTIONS_BT
+#define SY77_SEQUENCE_FUNCTIONS_BT
+
+  //
+  // Gets the active track status
+  //
+  
+  int getTrackActiveStatus(ACTIVE_TRACKS &activeTracks,int trackNumber) {
+    
+    switch (trackNumber) {
+      
+      case 0:
+        return activeTracks.activeTrack1;
+        
+      case 1:
+        return activeTracks.activeTrack2;
+        
+      case 2:
+        return activeTracks.activeTrack3;
+        
+      case 3:
+        return activeTracks.activeTrack4;
+        
+      case 4:
+        return activeTracks.activeTrack5;
+        
+      case 5:
+        return activeTracks.activeTrack6;
+        
+      case 6:
+        return activeTracks.activeTrack7;
+        
+      case 7:
+        return activeTracks.activeTrack8;
+        
+      case 8:
+        return activeTracks.activeTrack9;
+        
+      case 9:
+        return activeTracks.activeTrack10;
+        
+      case 10:
+        return activeTracks.activeTrack11;
+        
+      case 11:
+        return activeTracks.activeTrack12;
+        
+      case 12:
+        return activeTracks.activeTrack13;
+        
+      case 13:
+        return activeTracks.activeTrack14;
+        
+      case 14:
+        return activeTracks.activeTrack15;
+        
+      default:
+        return -1;
+        
+    }
+  
+  }
+  
+  //
+  // Finds the length of a track by searching from the current file position for 0xF2
+  //
+  
+  int findTrackLength() {
+    
+    // Get the current fiek position
+    local int64 currentPosition = FTell();
+    
+    // Iterate through the file
+    while ( FEof() == 0 ) {
+      
+      // Read a byte (without changing the file position), looking for an 0xF2 value 
+      if ( ReadUByte(currentPosition++) == 0xF2 ) {
+      
+        // Uncomment if you want some debug info
+        //Printf("End of Track %d found at %8.8x\n",i+1,currentPosition); 
+        
+        // Computer the length of the track 
+        // (noting that currentPosition has alread been incremented, so no need to add another byte)
+        return currentPosition - FTell();
+        
+      }
+      
+    }
+    
+    // We got to the end of the file without finding an F2 value
+    return -1;
+
+  }
+  
+  //
+  // Calculates the alignment to the next boundary
+  //
+  
+  #define FILE_ALIGNMENT 1024
+  
+  //
+  // Function to calculate the number of pad bytes required
+  // to the end of file (1024 byte boundary)
+  //
+  
+  int CalculateFilePadBytes() {
+  
+      return FILE_ALIGNMENT - (FTell() % FILE_ALIGNMENT);
+  
+  }
+
+#endif
+

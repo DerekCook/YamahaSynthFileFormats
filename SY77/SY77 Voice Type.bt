@@ -1,0 +1,38 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: Yamaha SY77 Voice Type.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 Voice Type data structures
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef SY77_VOICE_TYPE_BT
+#define SY77_VOICE_TYPE_BT
+
+  //
+  // SY77 Voice Type
+  //
+  
+  enum <ubyte> SY77_VOICE_TYPE {
+  
+    SY_VOICE_TYPE_1_AFM_MONO,
+    SY_VOICE_TYPE_2_AFM_MONO,
+    SY_VOICE_TYPE_4_AFM_MONO,
+    SY_VOICE_TYPE_1_AFM_POLY,
+    SY_VOICE_TYPE_2_AFM_POLY,
+    SY_VOICE_TYPE_1_AWM_POLY,
+    SY_VOICE_TYPE_2_AWM_POLY,
+    SY_VOICE_TYPE_4_AWM_POLY,
+    SY_VOICE_TYPE_1_AFM_1_AWM_POLY,
+    SY_VOICE_TYPE_2_AFM_2_AWM_POLY,
+    SY_VOICE_TYPE_DRUM
+    
+  };
+
+#endif
+

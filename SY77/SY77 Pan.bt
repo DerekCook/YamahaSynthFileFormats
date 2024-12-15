@@ -1,0 +1,26 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: Yamaha SY77 Pan.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 Pan data structure
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef SY77_PAN_BT
+#define SY77_PAN_BT
+
+  #define SY77_PAN_NAME_LENGTH 10
+  
+  typedef struct {
+    
+	  ubyte panSourceSelect;	  ubyte panSourceDepth;	  ubyte panEgKeyHoldTime;	  ubyte panEgKeyOnRate1;	  ubyte panEgKeyOnRate2;	  ubyte panEgKeyOnRate3;	  ubyte panEgKeyOnRate4;	  ubyte panEgKeyOffRate1;	  ubyte panEgKeyOffRate2;	  ubyte panEgKeyOnLevel0;	  ubyte panEgKeyOnLevel1;	  ubyte panEgKeyOnLevel2;	  ubyte panEgKeyOnLevel3;	  ubyte panEgKeyOnLevel4;	  ubyte panEgKeyOffLevel1;	  ubyte panEgKeyOffLevel2;	  ubyte panEgRepeatSegment;    
+    uchar name[SY77_PAN_NAME_LENGTH];
+  
+  } SY77_PAN;
+
+#endif

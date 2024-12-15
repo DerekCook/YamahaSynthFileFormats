@@ -1,0 +1,62 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: Yamaha SY77 Common.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 NN/TNN Common definitions
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef SY77_COMMON_BT
+#define SY77_COMMON_BT
+
+// Defines
+
+#define SY77_HEADER_LENGTH   16 
+#define SY77_PAD_1_LENGTH    16
+#define SY77_PAD_2_LENGTH   416
+#define SY77_PAD_3_LENGTH   176
+#define SY77_PAD_4_LENGTH   320
+#define SY77_PAD_5_LENGTH  1376
+#define SY77_PAD_6_LENGTH   256
+#define SY77_PAD_7_LENGTH   512
+#define SY77_PAD_8_LENGTH    64
+
+#define SY77_NUMBER_OF_MICROTUNINGS              2
+#define SY77_NUMBER_OF_HIDDEN_MICROTUNINGS       3
+#define SY77_NUMBER_OF_PANS                     32
+#define SY77_NUMBER_OF_HIDDEN_PANS              32
+#define SY77_NUMBER_OF_MULTIS                   16
+#define SY77_NUMBER_OF_VOICES                   64
+#define SY77_NUMBER_OF_SMALL_VOICES             48
+#define SY77_NUMBER_OF_LARGE_VOICES             16
+#define SY77_AWM_DRUM_VOICE_NUMBER_OF_ELEMENTS  61
+#define SY77_AFM_ELEMENT_NUMBER_OF_OPERATORS     6
+#define SY77_VOICE_NAME_LENGTH                  10
+#define SY77_MULTI_NAME_LENGTH                  20
+
+//
+// A structure for the Voice name directory entry found in JNN/TNN files 
+//
+
+typedef struct {
+
+    uchar name[SY77_VOICE_NAME_LENGTH];
+
+} VOICE_NAME;
+
+//
+// A structure for the Multi name directory entry found in JNN/TNN files 
+//
+
+typedef struct {
+
+    uchar name[SY77_MULTI_NAME_LENGTH];
+
+} MULTI_NAME;
+
+#endif

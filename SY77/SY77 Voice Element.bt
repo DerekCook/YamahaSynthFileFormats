@@ -1,0 +1,129 @@
+//------------------------------------------------
+//--- 010 Editor v8.0 Binary Template
+//
+//      File: Yamaha SY77 Voice Element.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 Voice Element data structures
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef SY77_VOICE_ELEMEMT_BT
+#define SY77_VOICE_ELEMEMT_BT
+
+  //
+  // SY77 Voice Element Header
+  //
+  
+  typedef struct {
+    
+	  ubyte volume;	  ubyte detune;	  ubyte noteShift;	  ubyte noteLimitLow;	  ubyte noteLimitHigh;	  ubyte velocityLimitLow;	  ubyte velocityLimitHigh;	  ubyte panTableSelect;	  ubyte switches;
+  
+  } SY77_VOICE_ElEMENT_HEADER;
+  
+  //
+  // SY77 Voice Element Headers
+  //
+  
+  typedef struct {
+    
+    // The number of element headers will depend on the voice type
+    switch ( type ) {
+    
+      // Small Voices (Banks A-C)
+      case SY_VOICE_TYPE_1_AFM_MONO:
+      case SY_VOICE_TYPE_2_AFM_MONO:
+      case SY_VOICE_TYPE_1_AFM_POLY:
+      case SY_VOICE_TYPE_2_AFM_POLY:
+      case SY_VOICE_TYPE_1_AWM_POLY:
+      case SY_VOICE_TYPE_2_AWM_POLY:
+      case SY_VOICE_TYPE_1_AFM_1_AWM_POLY:
+        SY77_VOICE_ElEMENT_HEADER elementHeader1;
+        SY77_VOICE_ElEMENT_HEADER elementHeader2;
+        break;
+      
+      // Large Voices (Bank D)
+      case SY_VOICE_TYPE_4_AFM_MONO:
+      case SY_VOICE_TYPE_4_AWM_POLY:
+      case SY_VOICE_TYPE_2_AFM_2_AWM_POLY:
+        SY77_VOICE_ElEMENT_HEADER elementHeader1;
+        SY77_VOICE_ElEMENT_HEADER elementHeader2;
+        SY77_VOICE_ElEMENT_HEADER elementHeader3;
+        SY77_VOICE_ElEMENT_HEADER elementHeader4;
+        break;
+    
+      case SY_VOICE_TYPE_DRUM:
+        // A drum voice has no element headers
+        break;  
+      
+    }  
+  
+  } SY77_VOICE_ELEMENT_HEADERS;
+  
+  //
+  // SY77 Voice Elements
+  //
+  
+  typedef struct {
+    
+    // The number of element headers will depend on the voice type
+    switch ( type ) {
+    
+      case SY_VOICE_TYPE_1_AFM_MONO:
+      case SY_VOICE_TYPE_1_AFM_POLY:
+        SY77_VOICE_AFM_ELEMENT element1;
+        break;
+        
+      case SY_VOICE_TYPE_2_AFM_MONO:
+      case SY_VOICE_TYPE_2_AFM_POLY:
+        SY77_VOICE_AFM_ELEMENT element1;
+        SY77_VOICE_AFM_ELEMENT element2;
+        break;
+  
+      case SY_VOICE_TYPE_1_AWM_POLY:
+        SY77_VOICE_AWM_ELEMENT element1;
+        break;
+  
+      case SY_VOICE_TYPE_2_AWM_POLY:
+        SY77_VOICE_AWM_ELEMENT element1;
+        SY77_VOICE_AWM_ELEMENT element2;
+        break;
+  
+      case SY_VOICE_TYPE_1_AFM_1_AWM_POLY:
+        SY77_VOICE_AFM_ELEMENT element1;
+        SY77_VOICE_AWM_ELEMENT element2;
+        break;
+  
+      case SY_VOICE_TYPE_4_AFM_MONO:
+        SY77_VOICE_AFM_ELEMENT element1;
+        SY77_VOICE_AFM_ELEMENT element2;
+        SY77_VOICE_AFM_ELEMENT element3;
+        SY77_VOICE_AFM_ELEMENT element4;
+        break;
+  
+      case SY_VOICE_TYPE_4_AWM_POLY:
+        SY77_VOICE_AWM_ELEMENT element1;
+        SY77_VOICE_AWM_ELEMENT element2;
+        SY77_VOICE_AWM_ELEMENT element3;
+        SY77_VOICE_AWM_ELEMENT element4;
+        break;
+        
+      case SY_VOICE_TYPE_2_AFM_2_AWM_POLY:
+        SY77_VOICE_AFM_ELEMENT element1;
+        SY77_VOICE_AFM_ELEMENT element2;
+        SY77_VOICE_AWM_ELEMENT element3;
+        SY77_VOICE_AWM_ELEMENT element4;
+        break;
+  
+      case SY_VOICE_TYPE_DRUM:
+        SY77_VOICE_AWM_DRUM_ELEMENT drumElements[SY77_AWM_DRUM_VOICE_NUMBER_OF_ELEMENTS];      
+        break;
+      
+    }  
+  
+  } SY77_VOICE_ELEMENTS;
+
+#endif

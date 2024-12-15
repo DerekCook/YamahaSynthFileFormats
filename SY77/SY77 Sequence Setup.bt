@@ -1,0 +1,26 @@
+//------------------------------------------------
+// 010 Editor v8.0 Binary Template
+//
+// File: Yamaha SY77 KNN Sequence Setup.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 KNN Sequence Setup File Format
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+#ifndef SY77_SEQUENCE_SETUP_BT
+#define SY77_SEQUENCE_SETUP_BT
+
+  //
+  // SY77 Sequence Setup
+  //
+  
+  typedef struct {
+  
+	  ubyte quantize;	  ubyte clickMode;	  ubyte clickBeat;	  ubyte reserved;	  ubyte sync;	  ubyte receiveMidichannel;	  ubyte velocityReceiveSwitch;	  ubyte controlChangeReceiveSwitch;	  ubyte pitchBendReceiveSwitch;	  ubyte programChangeReceiveSwitch;	  ubyte afterTouchReceiveSwitch;	  ubyte sysexReceiveSwitch;	  ubyte midiControlSwitch;	  ubyte editBeatClock;	  ubyte accent1Level;	  ubyte accent2Level;	  ubyte accent3Level;	  ubyte accent4Level;	  ubyte gateType;      
+  } SY77_SEQUENCE_SETUP;
+
+#endif

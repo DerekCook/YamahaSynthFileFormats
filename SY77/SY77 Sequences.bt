@@ -1,0 +1,35 @@
+//------------------------------------------------
+// 010 Editor v8.0 Binary Template
+//
+// File: Yamaha SY77 KNN Sequences.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Documents the Yamaha SY77/TG77 KNN Sequences File Format
+//  Category: 
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+// Includes
+
+#include "SY77 Sequence Setup.bt"
+#include "SY77 Sequence.bt"
+
+// defines
+
+#define SY77_KNN_PAD_1_LENGTH 973
+
+//
+// SY77 Sequencer
+//
+
+typedef struct {
+
+  SY77_SEQUENCE_SETUP sequencerSetup;    
+  ubyte               pad1[SY77_KNN_PAD_1_LENGTH];
+  
+  SY77_SEQUENCE       sequence;
+    
+} SY77_SEQUENCES;
+
