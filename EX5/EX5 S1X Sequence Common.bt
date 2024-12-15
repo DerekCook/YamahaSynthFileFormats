@@ -1,0 +1,49 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1R File
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 Sequence common data used by Arpeggios (S1R), Patterns (S1P) and Songs (S1S)
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1X_SEQUENCE_COMMON
+
+  #define S1X_SEQUENCE_COMMON
+  
+  //
+  // The track data
+  //
+  
+  struct S1X_TRACK (ushort trackSize) {
+  
+    // TODO currently undecoded
+    ubyte track[trackSize];
+    
+  };
+  
+  //
+  // The play effects
+  //
+  
+  struct S1X_PLAY_EFFECTS {
+    
+    byte unknown1;    byte grooveType;    byte grooveValue;    byte quantizeStrength;    byte quantizeTiming;    byte quantizeVelocity;    byte quantizeGateTime;    byte gateRate;    byte unknown2;    byte clockOffset;    byte velocityRate;    byte velocityOffset;    byte transpose;    byte unknown3;    byte unknown4;    byte unknown5;
+      
+   };
+   
+   //
+   // The groove template
+   //
+   
+   struct S1X_GROOVE_TEMPLATE {
+    
+      char name[10];
+      
+      // Todo have not decoded this
+      byte grooveTemplate[330];
+     
+    };
+
+#endif

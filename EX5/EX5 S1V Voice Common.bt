@@ -1,0 +1,202 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1V Voice Common
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1V File Format which contains EX5 Voices
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1V_VOICE_COMMON_DEF
+
+  // _DEF added to avoid name collision with stuct name
+  #define S1V_VOICE_COMMON_DEF
+  
+  //
+  // Decimal constant definitions
+  //
+  
+  #define S1V_VOICE_COMMON_SIZE              236
+  #define S1V_NUMBER_OF_VOICES               256
+  #define S1V_VOICE_NAME_LENGTH               12
+  #define S1V_VOICE_NUMBER_OF_CONTROLLER_SETS 16
+  #define S1V_VOICE_NUMBER_OF_SCENES           6
+  
+  //
+  // The S1V Voice Common Reverb Unit
+  //
+  //
+  
+  struct S1V_VOICE_COMMON_REVERB_UNIT {
+    
+    ubyte type;    ubyte parameter1;    ubyte parameter2;    ubyte parameter3;    ubyte parameter4;    ubyte parameter5;    ubyte parameter6;    ubyte parameter7;    ubyte parameter8;    ubyte parameter9;    ubyte parameter10;    ubyte parameter11;    ubyte parameter12;    short parameter13;    short parameter14;    ubyte reverbReturn;    ubyte pan;
+      
+   };
+   
+  //
+  // The S1V Voice Common Chorus Unit
+  //
+  //
+  
+  struct S1V_VOICE_COMMON_CHORUS_UNIT {
+     
+    ubyte type;    short parameter1;    short parameter2;    short parameter3;    short parameter4;    ubyte parameter5;    ubyte parameter6;    ubyte parameter7;    ubyte parameter8;    ubyte parameter9;    ubyte parameter10;    ubyte parameter11;    ubyte  arameter12;    ubyte chorusReturn;    ubyte pan;    ubyte sendChorusToReverb;   
+     
+  };
+  
+  //
+  // The S1V Voice Common Insert Effect Unit 1
+  //
+  //
+  
+  struct S1V_VOICE_COMMON_INSERT_EFFECT_UNIT_1 {
+     
+    ubyte type;    ubyte parameter1;    ubyte parameter2;    ubyte parameter3;    ubyte parameter4;    ubyte parameter5;    ubyte parameter6;    ubyte parameter7;    ubyte parameter8;    ubyte parameter9;    ubyte parameter10;    ubyte parameter11;    ubyte parameter12;    ubyte parameter13;    ubyte parameter14;    ubyte parameter15;     
+  };
+  
+  //
+  // The S1V Voice Common Insert Effect Unit 2
+  //
+  //
+  
+  struct S1V_VOICE_COMMON_INSERT_EFFECT_UNIT_2 {
+     
+    ubyte  type;    ushort parameter1;    ushort parameter2;    ushort parameter3;    ushort parameter4;    ushort parameter5;    ushort parameter6;    ushort parameter7;    ushort parameter8;    ushort parameter9;    ushort parameter10;    ushort parameter11;    ushort parameter12;    ushort parameter13;    ushort parameter14;    ushort parameter15;    ushort parameter16;     
+  };
+  
+  //
+  // The S1V Voice Common FDSP Unit
+  //
+  //
+  
+  struct S1V_VOICE_COMMON_FDSP_UNIT {
+     
+    ubyte type;    ubyte parameter1;    ubyte parameter2;    ubyte parameter3;    ubyte parameter4;    ubyte parameter5;    ubyte parameter6;    ubyte parameter7;    ubyte parameter8;    ubyte parameter9;    ubyte parameter10;    ubyte parameter11;    ubyte parameter12;    ubyte parameter13;    ubyte parameter14;    ubyte parameter15;    ubyte parameter16;    ubyte parameter17;    ubyte parameter18;    ubyte parameter19;    ubyte parameter20;
+     
+  };
+  
+  //
+  // S1V Voice Common Scene
+  //
+  
+  struct S1V_VOICE_COMMON_SCENE {
+    
+    ubyte scene1;
+    ubyte scene2;
+    ubyte initialValue;
+    
+  };
+  
+  //
+  // S1V Voice Common Arpeggio
+  //
+  
+  struct S1V_VOICE_COMMON_ARPEGGIO {
+    
+    ubyte type;    ubyte noteLimitLow;    ubyte notelimitHigh;    ubyte tempo;    
+  };
+  
+  //
+  // Typedef for the voice types
+  //
+  
+  enum <ubyte> S1V_VOICE_COMMON_TYPE {
+    
+    S1V_VOICE_TYPE_AWM      = 0x00,
+    S1V_VOICE_TYPE_VL       = 0x01,
+    S1V_VOICE_TYPE_FDSP     = 0x02,
+    S1V_VOICE_TYPE_AN_POLY  = 0x03,
+    S1V_VOICE_TYPE_AN_LAYER = 0x04,
+    S1V_VOICE_TYPE_AN_FDSP  = 0x05,
+    S1V_VOICE_TYPE_DRUM     = 0x06
+      
+   };
+  
+  //
+  // Byte bitfield for voice assign modes
+  //
+  
+  struct S1V_VOICE_COMMON_ASSIGN_MODE {
+    
+    ubyte portamentoSwitch : 1;    ubyte portamentoMode   : 1;    ubyte unused           : 1;    ubyte anMonoPoly       : 1;    ubyte monoPoly         : 1;    ubyte anPriority       : 1;    ubyte singleMulti      : 1;
+  
+  };
+  
+  //
+  // Byte bitfield for controller set assign flags
+  //
+  
+  struct S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN {
+    
+    short controllerSet1  : 1;
+    short controllerSet2  : 1;
+    short controllerSet3  : 1;
+    short controllerSet4  : 1;
+    short controllerSet5  : 1;
+    short controllerSet6  : 1;
+    short controllerSet7  : 1;
+    short controllerSet8  : 1;
+    short controllerSet9  : 1;
+    short controllerSet10 : 1;
+    short controllerSet11 : 1;
+    short controllerSet12 : 1;
+    short controllerSet13 : 1;
+    short controllerSet14 : 1;
+    short controllerSet15 : 1;
+    short controllerSet16 : 1;
+  
+  };
+  
+  //
+  // The S1V Voice Common Entry
+  //
+  //
+  
+  struct S1V_VOICE_COMMON {
+  
+    char                                   voiceName[S1V_VOICE_NAME_LENGTH];
+    ubyte                                  category;
+    ubyte                                  voiceVolume;
+    
+    // If the voice is not a drum voice then this byte is a bitfield of active elements
+    // If the voice is a drum voice then it is a count of total drum elements
+    if ( getVoiceType() != S1V_VOICE_TYPE_DRUM ) {
+      
+      ubyte                                element1Active : 1; 
+      ubyte                                element2Active : 1; 
+      ubyte                                element3Active : 1; 
+      ubyte                                element4Active : 1; 
+  
+    } else {
+      
+      ubyte                                drumElementCount;
+      
+    } 
+    
+    ubyte                                  velocitySenseDepth;    ubyte                                  velocitySenseOffset;    ubyte                                  reverbSendLevel;    ubyte                                  chorusSendLevel;
+    S1V_VOICE_COMMON_REVERB_UNIT           reverbUnit;    ubyte                                  reserved1;
+    S1V_VOICE_COMMON_CHORUS_UNIT           chorusUnit;
+    
+    S1V_VOICE_COMMON_TYPE                  voiceType : 3;
+    ubyte                                  insertEffectRouting : 2;
+    
+    S1V_VOICE_COMMON_INSERT_EFFECT_UNIT_1  insertEffect1;
+    ubyte                                  fdspPan;
+    S1V_VOICE_COMMON_INSERT_EFFECT_UNIT_2  insertEffect2;
+    ubyte                                  tempoControl;
+    ubyte                                  reserved2;    ubyte                                  reserved3;    ubyte                                  insertionToReverbSendLevel;    ubyte                                  insertionToChorusSendLevel;
+    S1V_VOICE_COMMON_FDSP_UNIT             fdspUnit;  
+    S1V_VOICE_COMMON_ASSIGN_MODE           assignMode;
+    ubyte                                  portamentoTime;
+    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN bendWheelAssign;    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN modulationWheelAssign;    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN afterTouchAssign;    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN modWheel2Assign;    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN footControllerAssign;    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN breathControllerAssign;    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN ribbonControllerAssign;    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN knob1Assign;    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN knob2Assign;    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN knob3Assign;    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN knob4Assign;    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN knob5Assign;    S1V_VOICE_COMMON_CONTROLLER_SET_ASSIGN knob6Assign;    ubyte                                  controllerDepthSet[S1V_VOICE_NUMBER_OF_CONTROLLER_SETS];
+    ubyte                                  controllerSetDestinationAssignNumber[S1V_VOICE_NUMBER_OF_CONTROLLER_SETS];
+    ubyte                                  controllerSetDestinationAssignElement[S1V_VOICE_NUMBER_OF_CONTROLLER_SETS];
+    ubyte                                  pitchBendUpperDepth;    ubyte                                  pitchBendLowerDepth;    S1V_VOICE_COMMON_SCENE                 scenes[S1V_VOICE_NUMBER_OF_SCENES];
+    S1V_VOICE_COMMON_ARPEGGIO              arpeggio;  
+    
+  };
+  
+#endif

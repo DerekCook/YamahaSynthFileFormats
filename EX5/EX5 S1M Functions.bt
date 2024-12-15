@@ -1,0 +1,88 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1M Functions
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1M File Format which contains waves, wave layers
+//            sample headers and sample data
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1M_FUNCTIONS
+
+  #define S1M_FUNCTIONS
+  
+  //
+  // Calculated definitions
+  //
+  // Note the 010 Template preprocessor does not seem to like line splits in preprocessor definitions
+  //
+  
+  // The EX5 has space for 1024 waves and 1024 layers
+  #define S1M_MAXIMUM_SIZE_OF_WAVE_BLOCK  ( (S1M_NUMBER_OF_WAVES * S1M_WAVE_SIZE ) + (S1M_NUMBER_OF_WAVE_LAYERS * S1M_WAVE_LAYER_SIZE ) )
+  
+  //
+  // Hexadecimal constant definitions
+  //
+  
+  #define S1M_SAMPLE_BLOCK_START_ADDRESS   0x00011086
+  
+  // Function to calculate the number of Waves
+  // by looking for addresses in the waveformPointers block that are not 0xffffffff
+  //
+  
+  int CalculateNumberofWaves() {
+  
+      local int numberOfWaves = 0;
+      local int i;
+  
+      for ( i = 0; i < S1M_NUMBER_OF_WAVES; i += 1 ) {
+      
+          if ( waves.waveformPointers[i] != 0xffffffff) {
+          
+            numberOfWaves +=1 ;
+            
+          }
+        
+      }
+  
+      return numberOfWaves;
+  
+  }
+  
+  // Function to calculate the unused wave block size
+  // 
+  
+  int CalculateUnusedWaveBlockSize() {
+  
+    return S1M_MAXIMUM_SIZE_OF_WAVE_BLOCK - 
+           ( ( CalculateNumberofWaves() * S1M_WAVE_SIZE ) + ( header.numberOfLayers * S1M_WAVE_LAYER_SIZE ) );
+    
+  }
+  
+  // Function to calculate the the pad byte amount from the end of 
+  // the samples to the the next 128 byte boundary
+  // 
+  
+  int CalculatePadBlockSize() {
+    
+    return ( 128 - ( ( S1M_SAMPLE_BLOCK_START_ADDRESS + samples.totalSampleSize ) % 128 ) );
+  
+  }
+  
+  // Function to display information
+  
+  void DisplayFileInformation() {
+  
+    Printf("The Number of Waves         is : %d\n",CalculateNumberofWaves());
+    Printf("The Number of Layers        is : %d\n",header.numberOfLayers);
+    Printf("The Total Number of Samples is : %d\n",samples.totalNumberOfSamples);
+    Printf("The Total Sample Size       is : %d\n",samples.totalSampleSize);
+    Printf("The Padblock Size           is : %d\n",CalculatePadBlockSize());
+    
+  }
+
+#endif

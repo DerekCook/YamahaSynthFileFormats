@@ -1,0 +1,62 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1V Voice Element AN
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1V File Format which contains EX5 Voices
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1V_VOICE_ELEMENT_AN_DEF
+
+  // _DEF added to avoid name collision with stuct name
+  #define S1V_VOICE_ELEMENT_AN_DEF
+  
+  //
+  // The S1V Voice AN Element EG Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_AN_EG {
+  
+    ubyte timeKeyFollow;    ubyte attack;    ubyte decay;    ubyte sustain;    ubyte release;
+  };
+  
+  //
+  // The S1V Voice AN Element VCO Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_AN_VCO {
+  
+    ubyte waveform;    ubyte frequencyCoarse;    ubyte frequencyFine;    ubyte edge;    ubyte width;    ubyte pwmDepth;    ubyte pwmSource;    ubyte pitchModulationDepth;    ubyte pitchModulationSource;
+  
+  }; 
+  
+  //
+  // The S1V Voice AN Element Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_AN {
+    
+    ubyte lfo2Wave;    ubyte lfo1KeySync;    ubyte lfo1Waveform;    ubyte reserved1;    ubyte lfo1Speed;    ubyte lfo1Delay;    ubyte reserved2;    ubyte lfo2Speed;    ubyte pitchEgTime;    ubyte pitchEgLevel;    ubyte pitchEgMode;    ubyte egRandom;    ubyte vco1Scale;    ubyte vco2Scale;
+    
+    ubyte keyFollowValue   : 3;
+    ubyte microTuningTable : 5;
+        ubyte vcoAlgorithm;    ubyte syncPitch;    ubyte syncDepth;    ubyte syncSource;    ubyte reserved3;    ubyte fmDepth;    ubyte fmModulation;    ubyte fmSource;
+    
+    S1V_VOICE_ELEMENT_AN_VCO vco1;
+    S1V_VOICE_ELEMENT_AN_VCO vco2;
+        ubyte vco1MixLevel;    ubyte vco2MixLevel;    ubyte ringModulationMixLevel;    ubyte noiseMixLevel;
+    
+    S1V_VOICE_ELEMENT_AN_EG vcaEg;
+        ubyte vcaFeedback;    ubyte vcaOutputLevel;    ubyte vcaVelocitySensitivity;    ubyte vcaLfo1ModulationDepth;    ubyte vcaKeyFollow;    ubyte reserved4;
+        S1V_VOICE_ELEMENT_AN_EG vcfEg;
+  
+    ubyte highPassFilterCuttoff;    ubyte vcfType;    ubyte vcfFrequency;    ubyte vcfResonance;    short vcfEgDepth;    ubyte vcfVelocitySensitivity;    ubyte vcfKeyFollow;    ubyte vcfLfo1ModulationDepth;
+    ubyte reserved5[3];    short anVelocityAssign;
+    ubyte reserved6[40];     
+  };
+  
+#endif

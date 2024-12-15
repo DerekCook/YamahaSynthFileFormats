@@ -1,0 +1,238 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1V Voice Element AWM (and AWM DRUM)
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1V File Format which contains EX5 Voices
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1V_VOICE_ELEMENT_AWM_DEF
+
+  // _DEF added to avoid name collision with stuct name
+  #define S1V_VOICE_ELEMENT_AWM_DEF
+
+  //
+  // The S1V Voice AWM Element LFO 1 Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_AWM_LFO1 {
+  
+    ubyte frequency                : 6;    ubyte wave                     : 2;
+    
+    ubyte pitchModulationDepth;
+    
+    ubyte amplitudeModulationDepth : 7;
+    ubyte pitchModulationDepthMsb  : 1;
+    
+    ubyte filterModulationDepth;
+        ubyte keyDelay : 7;    ubyte keySync  : 1;
+        ubyte fadeTime;  
+    ubyte speedVelocitySensitivity : 4;
+    ubyte speedRandomSensitivity   : 4;
+  
+  }; 
+  
+  //
+  // The S1V Voice AWM Element LFO 1 Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_AWM_LFO2 {
+  
+    ubyte frequency;
+    
+    ubyte wave  : 3;
+    ubyte phase : 2;
+    
+    ubyte destination;
+    ubyte depth;
+    
+    ubyte keyDelay : 7;    ubyte keySync  : 1;
+    
+    ubyte fadeTime;
+    
+  };
+  
+  //
+  // The S1V Voice AWM Element Pitch EG Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_AWM_PITCH_EG {
+  
+    ubyte holdLevel;    ubyte attackLevel;    ubyte decay1Level;    ubyte decay2Level;    ubyte release2Level;    ubyte release1Level;
+    ubyte depth;    ubyte holdTime;
+    ubyte attackTime;    ubyte decay1Time;    ubyte decay2Time;    ubyte release1Time;    ubyte release2Time;    
+    ubyte timeScaling  : 4;
+    ubyte loopPoint    : 2;    
+    ubyte holdTimeVelocity : 4;    ubyte random           : 4;
+        ubyte otherTimeVelocity  : 4;    ubyte attackTimeVelocity : 4;
+  
+    ubyte levelVelocity;
+    
+  };
+  
+  
+  //
+  // The S1V Voice AWM Element EG Scaling Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_AWM_SCALING {
+  
+    ubyte breakPoint1;    ubyte breakPoint2;    ubyte breakPoint3;    ubyte breakPoint4;    ubyte level1;    ubyte level2;    ubyte level3;    ubyte level4;    ubyte keyFollow;
+    
+  };
+    
+  //
+  // The S1V Voice AWM Element VCA EG Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_AWM_VCA_EG {
+  
+    ubyte holdLevel;
+    
+    ubyte attackTime : 7;
+    ubyte attackMode : 1;
+    
+    ubyte decay1Time;    ubyte decay1Level;    ubyte decay2Time;      ubyte decay2Level;    ubyte decay3Time;      ubyte decay3Level;
+  
+    ubyte release1Time : 7;    ubyte releaseMode  : 1;
+        ubyte release1Level;
+    ubyte release2Time;
+  
+    S1V_VOICE_ELEMENT_AWM_SCALING scaling;
+    
+    ubyte keyVelocity;
+    
+    ubyte unknown            : 4;
+    ubyte decayLevelVelocity : 4;
+    
+    ubyte attackTimeVelocity : 4;
+    ubyte timeScaling        : 4;
+    
+    ubyte otherTimeVelocity  : 4;    ubyte decay1TimeVelocity : 4;
+  
+  };
+    
+  //
+  // The S1V Voice AWM Element DCF EG Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_AWM_DCF_EG {
+  
+    ubyte holdLevel;
+    ubyte attackLevel;
+    ubyte decay1Level;    ubyte decay2Level;    ubyte release1Level;
+    ubyte release2Level;
+    ubyte holdLevel;
+    ubyte attackTime;
+    ubyte decay1Time;    ubyte decay2Time;  
+    ubyte release1Time;    ubyte release2Time;    
+    ubyte timeScaling : 4;
+    ubyte loopPoint   : 2;
+    
+    ubyte holdTimeVelocity  : 4;
+    ubyte resonanceVelocity : 4;
+    
+    ubyte otherTimeVelocity  : 4;    ubyte attackTimeVelocity : 4;
+  
+  };
+    
+  //
+  // The S1V Voice AWM Element DCF Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_AWM_DCF {
+    
+    ubyte filterType      : 4;    ubyte egEnable        : 1;    ubyte lfoEnable       : 1;    ubyte resonanceEnable : 1;    
+    ubyte frequency;    ubyte gain;      S1V_VOICE_ELEMENT_AWM_SCALING scaling;      ubyte frequencyVelocity : 4;    ubyte gainVelocity      : 4;      ubyte egVelocity        : 4;    ubyte frequencyRandom   : 4;
+        ubyte egDepth;
+    
+  };
+  
+  //
+  // The S1V Voice AWM Element SCF Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_AWM_SCF {
+  
+    ubyte filterType;    ubyte frequency1;    ubyte gain1;    ubyte resonance;      ubyte frequency1Velocity : 4;    ubyte gain1Velocity      : 4;      ubyte frequencyRandom : 4;    ubyte resonanceRandom : 4;      ubyte frequency2;    ubyte gain2;    ubyte reserved;      ubyte frequency2Velocity : 4;    ubyte gain2Velocity      : 4;      ubyte keyFollow;    ubyte inputGain;
+  };
+  
+  //
+  // The S1V Voice AWM Element Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_AWM {
+    
+    ubyte  keyOnDelay;
+    
+    S1V_VOICE_ELEMENT_AWM_LFO1 lfo1;
+    S1V_VOICE_ELEMENT_AWM_LFO2 lfo2;
+    
+    ubyte keyFollowValue   : 3;
+    ubyte microTuningTable : 5;
+  
+    ubyte pitchScalingCentreNote;
+    
+    S1V_VOICE_ELEMENT_AWM_PITCH_EG pitchEg;
+    S1V_VOICE_ELEMENT_AWM_VCA_EG   vcaEg;
+    
+    ubyte dcfResonance      : 5;
+    ubyte dcfConnectionMode : 1;
+    
+    S1V_VOICE_ELEMENT_AWM_DCF_EG   dcfEg;
+    
+    S1V_VOICE_ELEMENT_AWM_DCF dcf1;
+    S1V_VOICE_ELEMENT_AWM_DCF dcf2;
+    
+    S1V_VOICE_ELEMENT_AWM_SCF scf;
+  
+  };
+  
+  //
+  // The S1V Voice AWM Drum Element Entry
+  //
+  // Note the following variables are repurposed in a Drum element
+  // There is no easy way to represent this in this template other
+  // than describing it
+  //
+  //
+  // waveStartOffset      MSB = vcaEg.scaling.breakPoint3
+  // waveStartOffset      LSB = vcaEg.scaling.breakPoint4
+  //
+  // waveLoopLengthOffset MSB = vcaEg.scaling.level1
+  // waveLoopLengthOffset LSB = vcaEg.scaling.level2
+  //
+  // alternateGroup           = vcaEg.scaling.level4
+  //
+  // reverbSendLevel          = dcf2.scaling.breakPoint1
+  //
+  // chorusSendLevel          = dcf2.scaling.breakPoint2
+  
+  struct S1V_VOICE_ELEMENT_AWM_DRUM {
+    
+    ubyte  keyOnDelay;
+    
+    S1V_VOICE_ELEMENT_AWM_LFO1 lfo1;
+    
+    ubyte unused[8];
+  
+    S1V_VOICE_ELEMENT_AWM_PITCH_EG pitchEg;
+    S1V_VOICE_ELEMENT_AWM_VCA_EG   vcaEg;
+  
+    ubyte dcfResonance      : 5;
+    ubyte dcfConnectionMode : 1;
+    
+    S1V_VOICE_ELEMENT_AWM_DCF_EG   dcfEg;
+    
+    S1V_VOICE_ELEMENT_AWM_DCF dcf1;
+    S1V_VOICE_ELEMENT_AWM_DCF dcf2;
+    
+    S1V_VOICE_ELEMENT_AWM_SCF scf;
+    
+  };
+  
+#endif

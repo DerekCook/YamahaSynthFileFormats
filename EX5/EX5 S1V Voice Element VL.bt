@@ -1,0 +1,71 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1V Voice Element AN
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1V File Format which contains EX5 Voices
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1V_VOICE_ELEMENT_VL_DEF
+
+  // _DEF added to avoid name collision with stuct name
+  #define S1V_VOICE_ELEMENT_VL_DEF
+
+  //
+  // The S1V Voice VL Element Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT_VL {
+    
+    ubyte  unused1[8];
+    
+    ubyte  lfoFrequency;    
+    ubyte  unused2[2];
+    
+    ubyte  lfoDepth;    ubyte  lfoDelay;    
+    ubyte  unused3;
+  
+    ubyte keyFollowValue   : 3;
+    ubyte microTuningTable : 5;
+   
+    ubyte  pitchScalingCentreNote;
+   
+    ubyte  unused4[7];
+  
+    ubyte  pitchEgInitialLevel;    ubyte  pitchEgAttackTime;   
+    ubyte  unused4;
+  
+    ubyte  pitchEgReleaseLevel;    ubyte  pitchEgReleaseTime;
+  
+    ubyte  unused5[6];
+  
+    ubyte  vcaEgAttackTime;    ubyte  vcaEgDecayTime;
+    
+    ubyte  unused6[2];
+    
+    ubyte  vcaEgSustainLevel;
+    
+    ubyte  unused7[4];
+       ubyte  vcaEgReleaseTime;    ubyte  vcaLevelKeyFollowBreakPoint;    ubyte  vcaLevelKeyFollow;    
+    ubyte  unused8[11];
+   
+    ubyte  dcfResonance;
+    
+    ubyte  unused9[15];
+      ushort vlVelocityAssign;    ubyte  dcfFrequency;    ubyte  dcfKeyFollowBreakPoint;    ubyte  dcfKeyFollow;
+  
+    ubyte  unused10[9];
+  
+    ubyte  dcfEgDepth;
+    
+    ubyte  unused11[11];
+        ubyte  postEqualiserGain;    ubyte  equaliserBand1Frequency;    ubyte  equaliserBand1Resonance;    ubyte  equaliserBand1Gain;    ubyte  equaliserBand2Frequency;    ubyte  equaliserBand2Resonance;    ubyte  equaliserBand2Gain;    ubyte  equaliserBand3Frequency;    ubyte  equaliserBand3Resonance;    ubyte  equaliserBand3Gain;    ubyte  equaliserBand4Frequency;    ubyte  equaliserBand4Resonance;    ubyte  equaliserBand4Gain;    ubyte  equaliserBand5Frequency;    ubyte  equaliserBand5Resonance;    ubyte  equaliserBand5Gain;    
+  };
+  
+#endif
+    
+  

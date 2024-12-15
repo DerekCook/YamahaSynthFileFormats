@@ -1,0 +1,28 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1Y System
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1Y File Format which contains EX5 Voices
+//
+// Notes:     I have never decoded the system data block other than the welcoem message
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1Y_SYSTEM_DEF
+
+  // _DEF added to avoid name collision with stuct name
+  #define S1Y_SYSTEM_DEF
+  
+  #define S1Y_SYSTEM_WELCOM_MESSAGE_LENGTH 40
+  
+  struct S1Y_SYSTEM {
+    
+    ubyte systemBlock1[4];
+    char  welcomeMessage[S1Y_SYSTEM_WELCOM_MESSAGE_LENGTH];
+    ubyte systemBlock2[128];
+    
+  };
+  
+#endif

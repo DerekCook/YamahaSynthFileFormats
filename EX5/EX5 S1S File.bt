@@ -1,0 +1,167 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 Sequence Common
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1S File Format which contains EX5 Patterns
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1S_FILE
+
+  #define S1S_FILE
+  
+  //
+  // Decimal constant definitions
+  //
+  
+  #define S1S_HEADER_FILE_ID_LENGTH       16
+  
+  // The header reserved length is different in S1S and S1A files
+  #ifndef S1A_FILE
+  
+    #define S1S_HEADER_RESERVED_LENGTH    16
+  
+  #else
+  
+    #define S1S_HEADER_RESERVED_LENGTH   112
+  
+  #endif
+  
+  #define S1S_SONG_NUMBER_OF_TRACKS       16
+  #define S1S_SONG_COMMON_SIZE           512
+  #define S1S_SONG_NAME_LENGTH            12
+  #define S1S_TRACK_NAME_LENGTH            8
+  #define S1S_SONG_COMMON_BLOCK_PAD_SIZE 122
+  
+  //
+  // The following defines need to adapt depending on whether or not this S1S data is 
+  // within an S1S or S1A file
+  //
+  
+  #ifndef S1A_FILE
+  
+    #define S1S_PAD_BLOCK_SIZE 60
+  
+  #else 
+  
+    #define S1S_PAD_BLOCK_SIZE 22
+  
+  #endif
+  
+  //
+  // Includes
+  //
+  
+  #include "EX5 S1X Sequence Common.bt"
+  
+  // 
+  // The S1S file header
+  //
+  
+  struct S1S_HEADER {
+  
+    char  FileID[S1S_HEADER_FILE_ID_LENGTH];     // The file ID for S1M files
+    ubyte reserved[S1S_HEADER_RESERVED_LENGTH];  // reserved block of zero bytes
+                                               
+  };
+  
+  //
+  // The track name structure (required as 010 does not support 2D arrays)
+  
+  struct S1S_TRACK_NAME {
+    
+    char trackName[S1S_TRACK_NAME_LENGTH];
+  
+  };
+  
+  //////////////////////////////////////////////////////////////////////////
+  // Start of the S1S template 
+  // Data is big endian, but bit fields are right to left
+  
+  BigEndian();
+  BitfieldRightToLeft();
+  
+  // The header data
+  S1S_HEADER  s1sHeader;    
+  
+  // The track sizes
+  ushort trackSizes[S1S_SONG_NUMBER_OF_TRACKS];
+  ushort patternTrackSize;
+  ushort playEffectsTrackSize;
+  
+  // If this block is within an S1A file then there is an alignment value for the end of block pad
+  #ifdef S1A_FILE
+  
+    uint   unused;
+    ushort s1sAlign;
+  
+  #endif
+  
+  // The pad bytes before the start of the pattern data
+  ubyte s1sPadBytes[S1S_PAD_BLOCK_SIZE];
+  
+  // The song name
+  char songName[S1S_SONG_NAME_LENGTH];
+  
+  // The names of the song's tracks
+  S1S_TRACK_NAME trackNames[S1S_SONG_NUMBER_OF_TRACKS];
+  
+  ushort tempo;
+  ushort trackMute;
+  ubyte  unknown1;
+  ubyte  playEffectsMute;
+  ushort playEffectsThrough;
+  byte   unknown2;  byte   unknown3;  byte   patternTrackMute;  byte   patternTrackNumber;  byte   unknown4;  byte   loop;  ushort loopStart;  ushort loopEnd;  byte   unknown5;  byte   clickMode;  byte   clickBeat;  byte   lastTrackRecorded;
+  S1X_PLAY_EFFECTS songPlayEffects[S1S_SONG_NUMBER_OF_TRACKS];
+  
+  byte transmitChannels[S1S_SONG_NUMBER_OF_TRACKS];
+  
+  S1X_GROOVE_TEMPLATE songGrooveTemplate;
+    
+  ubyte s1sPadBytes2[S1S_SONG_COMMON_BLOCK_PAD_SIZE];
+  
+  local int songTrackIndex;
+  
+  // There can be up to 16 tracks, but they are only defined if
+  // The common block size in the header is non zero
+  
+  for ( songTrackIndex = 0; songTrackIndex < S1S_SONG_NUMBER_OF_TRACKS; songTrackIndex += 1 ) {
+  
+    if ( trackSizes[songTrackIndex] != 0 ) {
+      
+      S1X_TRACK songTrack(trackSizes[songTrackIndex]);
+    
+    }
+    
+  }
+  
+  // Add the pattern track if needed
+  if ( patternTrackSize != 0 ) {
+    
+      S1X_TRACK patternTrack(patternTrackSize);
+  
+  }
+  
+  // Add the play effects track if needed
+  if ( playEffectsTrackSize != 0 ) {
+    
+      S1X_TRACK playEffectsTrackSize(patternTrackSize);
+  
+  }
+  
+  // If this block is within an S1A file then we need to add the end of block pad
+  #ifdef S1A_FILE
+  
+    uchar s1sEndBlockPad[s1sAlign];
+  
+  #endif
+  
+  //
+  // End of S1S File
+  //
+
+#endif

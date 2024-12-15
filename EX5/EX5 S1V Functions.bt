@@ -1,0 +1,182 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1V Functions
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1V File Format which contains EX5 Voices
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1V_FUNCTIONS
+
+  #define S1V_FUNCTIONS
+
+  // Function to calculate the number of Elements
+  // by looking for addresses in the voice elements that are not 0x80 (off)
+  //
+  
+  int CalculateNumberofElements() {
+  
+    local int numberOElements = 0;
+    local int i;
+  
+    for ( i = 0; i < S1V_TOTAL_NUMBER_OF_ELEMENTS; i += 1 ) {
+      
+      if (elementMap.voiceElements[i].elementNumber != 0x80) {
+          
+        numberOElements +=1 ;
+            
+      }
+        
+    }
+  
+    return numberOElements;
+  
+  }
+  
+  //
+  // Function to check the element type and return a descriptive string
+  //
+  
+  string DetermineElementType(VOICE_ELEMENT_TYPE elementType) {
+  
+    switch (elementType) {
+    
+      case S1V_VOICE_ELEMENT_TYPE_AWM_PRE:        return "AWM Element (Preset)";
+      
+      case S1V_VOICE_ELEMENT_TYPE_AWM_RAM:        return "AWM Element (RAM)";
+      
+      case S1V_VOICE_ELEMENT_TYPE_AWM_FLS:        return "AWM Element (FLASH)";
+      
+      case S1V_VOICE_ELEMENT_TYPE_DRUM_PRE:        return "AWM Drum Element (Preset)";
+      
+      case S1V_VOICE_ELEMENT_TYPE_DRUM_RAM:        return "AWM Drum Element (RAM)";
+        
+      case S1V_VOICE_ELEMENT_TYPE_DRUM_FLS:        return "AWM Drum Element (FLASH)";
+      
+      case S1V_VOICE_ELEMENT_TYPE_VL:        return "VL Element";
+      
+      case S1V_VOICE_ELEMENT_TYPE_AN:
+        return "AN Element";
+          
+      default:
+        return "** Error";
+      
+    }
+    
+  }
+  
+  //
+  // Display the number of active elements
+  //
+  
+  void DisplayElementCount() {
+    
+    Printf("The number of Elements used is : %d\n",CalculateNumberofElements());
+  
+  }
+  
+  // 
+  // Function to display element information
+  //
+  
+  void DisplayElementInformation() {
+   
+    local int i;
+    
+    for (i = 0; i < S1V_TOTAL_NUMBER_OF_ELEMENTS; i += 1 ) {
+    
+      if (elementMap.voiceElements[i].elementNumber != 0x80) {
+       
+       Printf("Element %4d - %s\n",i,DetermineElementType(voiceElement[i].elementType));
+         
+      } else {
+         
+       Printf("Element %4d - is not used\n",i);
+         
+      }
+      
+    } 
+    
+  }
+  
+  //
+  // Function to look ahead and get the voice type, as 010 does not allow forward referencing
+  //
+  
+  #define S1V_VOICE_COMMON_VOICE_TYPE_OFFSET 45
+  #define S1V_VOICE_COMMON_VOICE_TYPE_MASK    7
+  
+  ubyte getVoiceType() {
+    
+    return (ubyte) ReadByte(FTell() + S1V_VOICE_COMMON_VOICE_TYPE_OFFSET) & 0x07;
+  
+  }
+  
+  //
+  // Funcyion to display voice statistics
+  //
+  
+  void DisplayVoiceInformation() {
+  
+    local int awmVoices     = 0;
+    local int vlVoices      = 0;
+    local int fdspVoices    = 0;
+    local int anPolyVoices  = 0;
+    local int anLayerVoices = 0;
+    local int anFdspVoices  = 0;
+    local int drumVoices    = 0;
+    
+    local int i;
+    
+    for ( i = 0; i < S1V_NUMBER_OF_VOICES; i += 1 ) {
+    
+      switch ( voiceCommon[i].voiceType ) {
+      
+        case S1V_VOICE_TYPE_AWM:
+          awmVoices += 1;
+          break;
+        
+        case S1V_VOICE_TYPE_VL:
+          vlVoices += 1;
+          break;
+        
+        case S1V_VOICE_TYPE_FDSP:
+          fdspVoices += 1;
+          break;
+        
+        case S1V_VOICE_TYPE_AN_POLY:
+          anPolyVoices += 1;
+          break;
+        
+        case S1V_VOICE_TYPE_AN_LAYER:
+          anLayerVoices += 1;
+          break;
+        
+        case S1V_VOICE_TYPE_AN_FDSP:
+          anFdspVoices += 1;
+          break;
+        
+        case S1V_VOICE_TYPE_DRUM:
+          drumVoices += 1;
+          break;
+        
+      }
+      
+    }
+    
+    Printf("AWM       Voices: %3d\n",awmVoices);
+    Printf("VL        Voices: %3d\n",vlVoices);
+    Printf("FDSP      Voices: %3d\n",fdspVoices);
+    Printf("AN(Poly)  Voices: %3d\n",anPolyVoices);
+    Printf("AN(Layer) Voices: %3d\n",anLayerVoices);
+    Printf("AN+FDSP   Voices: %3d\n",anFdspVoices);
+    Printf("Drum      Voices: %3d\n",drumVoices);
+    
+  }
+  
+#endif
+

@@ -1,0 +1,185 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 Sequence Common
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1R File Format which contains EX5 Arpeggios
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1R_FILE
+
+  #define S1R_FILE
+
+  //
+  // Decimal constant definitions
+  //
+  
+  #define S1R_HEADER_FILE_ID_LENGTH           16
+  #define S1R_HEADER_RESERVED_LENGTH          16
+  #define S1R_NUMBER_OF_ARPEGGIOS             50
+  #define S1R_ARPEGGIO_NUMBER_OF_TRACKS        4
+  #define S1R_ARPEGGIO_COMMON_SIZE           512
+  #define S1R_ARPEGGIO_NAME_LENGTH             8
+  #define S1R_ARPEGGIO_COMMON_BLOCK_PAD_SIZE  80
+  
+  //
+  // The following defines need to adapt depending on whether or not this S1R data is 
+  // within an S1R or S1A file
+  //
+  
+  #ifndef S1A_FILE
+  
+    #define S1R_PAD_BLOCK_SIZE 108
+  
+  #else 
+  
+    #define S1R_PAD_BLOCK_SIZE 10
+  
+  #endif
+  
+  //
+  // Includes
+  //
+  
+  #include "EX5 S1X Sequence Common.bt"
+  
+  //
+  // local variables (which do not appear in the template results
+  //
+  
+  local int arpeggioIndex;
+  local int arpeggioTrackIndex;
+  
+  // 
+  // The S1R file header
+  //
+  
+  struct S1R_HEADER {
+  
+    char  FileID[S1R_HEADER_FILE_ID_LENGTH];     // The file ID for S1M files
+    ubyte reserved[S1R_HEADER_RESERVED_LENGTH];  // reserved block of zero bytes
+                                               
+  };
+  
+  //
+  // The S1R Arpeggio Header which gives the length of the tracks and the common block size for each arpeggio
+  //
+  // If the common block size is zero, the track lengths will also be zero
+  //
+  // zero length data is not written in the file, so this header info is crucial in parsing the rest of the file
+  //
+  
+  struct S1R_ARPEGGIO_HEADER {
+    
+    ushort trackLengths[S1R_ARPEGGIO_NUMBER_OF_TRACKS];
+  
+    ushort commonBlockLength;
+    
+  };
+  
+  //
+  // The arpeggio common block
+  //
+  
+  struct S1R_ARPEGGIO_COMMON_BLOCK {
+  
+    char arpeggioName[S1R_ARPEGGIO_NAME_LENGTH];
+  
+    byte unknown1;    byte unknown2;    byte unknown3;    byte trackMute;    byte unknown4;    byte arpeggioLength;    byte playEffectsThrough;    byte keyVelocity;
+    S1X_PLAY_EFFECTS playEffects[S1R_ARPEGGIO_NUMBER_OF_TRACKS];
+  
+    byte trackModes[S1R_ARPEGGIO_NUMBER_OF_TRACKS];
+    
+    S1X_GROOVE_TEMPLATE grooveTemplate;
+    
+    ushort unknown5[S1R_ARPEGGIO_NUMBER_OF_TRACKS];
+    
+    ubyte pad[S1R_ARPEGGIO_COMMON_BLOCK_PAD_SIZE];
+    
+  };
+  
+  //
+  // The arpeggio structure in the file.
+  //
+  // Tracks with no length in the apreggio header structure are not present in the data
+  //
+  // If the arpeggio is present in the file, there will always be a common block
+  //
+  // Note that tracks with data in are not necessarilly contigious, you need to go off the 
+  
+  struct S1R_ARPEGGIO {
+  
+    // Iterate through the track header
+    for ( arpeggioTrackIndex = 0; arpeggioTrackIndex < S1R_ARPEGGIO_NUMBER_OF_TRACKS; arpeggioTrackIndex += 1 ) {
+    
+      // Is the track length non zero
+      if ( arpeggioHeaders[arpeggioIndex].trackLengths[arpeggioTrackIndex] != 0 ) {
+      
+        // Yes, create a track. 
+        S1X_TRACK track(arpeggioHeaders[arpeggioIndex].trackLengths[arpeggioTrackIndex]);
+        
+      }
+      
+    }
+    
+    S1R_ARPEGGIO_COMMON_BLOCK commonBlock;
+        
+  };
+  
+  //////////////////////////////////////////////////////////////////////////
+  // Start of the S1R template 
+  // Data is big endian, but bit fields are right to left
+  
+  BigEndian();
+  BitfieldRightToLeft();
+  
+  // If this block is within an S1A file then there is no S1R file header
+  #ifndef S1A_FILE
+  
+    // The header data
+    S1R_HEADER  header;    
+  
+  #endif
+  
+  // The arpeggio header blocks
+  S1R_ARPEGGIO_HEADER arpeggioHeaders[S1R_NUMBER_OF_ARPEGGIOS];
+  
+  // If this block is within an S1A file then there is an alignment value for the end of block pad
+  #ifdef S1A_FILE
+  
+    ushort s1rEndBlockSize;
+  
+  #endif
+  
+  // The pad bytes before the start of the arpeggio data
+  uchar s1rPadBytes[S1R_PAD_BLOCK_SIZE];
+  
+  // There can be up to 50 arpeggioss, but they are only defined if
+  // The common block size in the header is non zero
+  
+  for ( arpeggioIndex = 0; arpeggioIndex < S1R_NUMBER_OF_ARPEGGIOS; arpeggioIndex += 1 ) {
+  
+    if ( arpeggioHeaders[arpeggioIndex].commonBlockLength != 0 ) {
+      
+      S1R_ARPEGGIO arpeggio;
+    
+    }
+    
+  }
+  
+  // If this block is within an S1A file then we need to add the end of block pad
+  #ifdef S1A_FILE
+  
+    uchar s1rEndBlockPad[s1rEndBlockSize];
+  
+  #endif
+  
+  //
+  // End of S1R File
+  //
+  
+#endif

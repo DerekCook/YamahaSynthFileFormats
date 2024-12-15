@@ -1,0 +1,116 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1Y Performance
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1Y File Format which contains EX5 Voices
+//
+// Notes:     I have never decoded the system data block other than the welcoem message
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1Y_PERFORMANCE_DEF
+
+  // _DEF added to avoid name collision with stuct name
+  #define S1Y_PERFORMANCE_DEF
+  
+  //
+  // Constant definitons
+  //
+  
+  #define S1Y_NUMBER_OF_PERFORMANCES                     128
+  #define S1Y_PERFORMANCE_NAME_LENGTH                     12
+  #define S1Y_PERFORMACE_NUMBER_OF_SCENES                  6
+  #define S1Y_NUMBER_OF_PERFORMANCE_PARTS                 16
+  #define S1Y_PERFORMANCE_PART_NUMNBER_OF_RESERVED_BYTES  74
+  
+  //
+  // The S1Y Performance Part
+  //
+  
+  struct S1Y_PERFORMANCE_PART {
+    
+    ubyte  bankSelectMsb;    ubyte  bankSelectLsb;    ubyte  programNumber;    ubyte  tgBank;    ubyte  detune;    ubyte  volume;    ubyte  pan;    ubyte  chorusSend;    ubyte  reverbSend;    ubyte  vibratoRate;    ubyte  vibratoDepth;    ubyte  vibratoDelay;    ubyte  filterCuttoffFrequency;    ubyte  filterResonance;    ubyte  egAttackTime;    ubyte  egDecayTime;    ubyte  egReleaseTime;    ubyte  portamento;    ubyte  portamentoTime;    ubyte  pitchEgInitialLevel;    ubyte  pitchEgAttackTime;    ubyte  pitchEgReleaseLevel;    ubyte  pitchEgReleaseTime;    ubyte  tgProgramNumber;
+    ubyte  reserved[S1Y_PERFORMANCE_PART_NUMNBER_OF_RESERVED_BYTES];    ubyte  pitchBendUpperDepth;    ubyte  pitchBendLowerDepth;    ubyte  outputSelect;    ubyte  layer;    ubyte  transpose;    ubyte  noteLimitLow;    ubyte  noteLimitHigh;    ubyte  velocityLimitLow;    ubyte  velocityLimitHigh;    ubyte  masterKeyboardVelocityCurve;    ubyte  masterKeyboardVelocitySenseDepth;    ubyte  masterKeyboardVelocitySenseOffset;    ubyte  bendWheelInitialValue;    ubyte  modulationWheel1InitialValue;    ubyte  afterTouchInitialValue;    ubyte  modulationWheel2InitialValue;    ubyte  footControllerInitialValue;    ubyte  breathControllerInitialValue;    ubyte  ribbonControllerInitialValue;    ubyte  knob1InitialValue;    ubyte  knob2InitialValue;    ubyte  knob3InitialValue;    ubyte  knob4InitialValue;    ubyte  knob5InitialValue;    ubyte  knob6InitialValue;    ubyte  param1;    ubyte  param2;    ubyte  param3;
+  };
+    
+  //
+  // The S1Y Performance Common Reverb Unit
+  //
+  
+  struct S1Y_PERFORMANCE_COMMON_REVERB_UNIT {
+    
+    ubyte type;    ubyte parameter1;    ubyte parameter2;    ubyte parameter3;    ubyte parameter4;    ubyte parameter5;    ubyte parameter6;    ubyte parameter7;    ubyte parameter8;    ubyte parameter9;    ubyte parameter10;    ubyte parameter11;    ubyte parameter12;    short parameter13;    short parameter14;    ubyte reverbReturn;    ubyte pan;
+      
+  };
+   
+  //
+  // The S1Y Performance Common Common Chorus Unit
+  //
+  
+  struct S1Y_PERFORMANCE_COMMON_CHORUS_UNIT {
+     
+    ubyte type;    short parameter1;    short parameter2;    short parameter3;    short parameter4;    ubyte parameter5;    ubyte parameter6;    ubyte parameter7;    ubyte parameter8;    ubyte parameter9;    ubyte parameter10;    ubyte parameter11;    ubyte  arameter12;    ubyte chorusReturn;    ubyte pan;    ubyte sendChorusToReverb;   
+     
+  };
+  
+  //
+  // S1Y Performance Common Scene
+  //
+  
+  struct S1Y_PERFORMANCE_COMMON_SCENE {
+    
+    ubyte scene1;
+    ubyte scene2;
+    
+  };
+  
+  //
+  // S1Y Performance Common Arpeggio
+  //
+  
+  struct S1Y_PERFORMANCE_COMMON_ARPEGGIO {
+    
+    ubyte type;
+    ubyte midiChannel;    ubyte noteLimitLow;    ubyte notelimitHigh;    ubyte tempo;    
+  };
+  
+  //
+  // The Performance Common Block
+  //
+  
+  struct S1Y_PERFORMANCE_COMMON {
+    
+    char  performancename[S1Y_PERFORMANCE_NAME_LENGTH];
+    
+    byte  category;
+    byte  totalVolume;    byte  keyboardMode;
+    
+    S1Y_PERFORMANCE_COMMON_REVERB_UNIT reverbUnit;
+        byte  reserved1;
+    
+    S1Y_PERFORMANCE_COMMON_CHORUS_UNIT chorusUnit;
+    
+    byte  tempoControl;    byte  reserved2;    byte  reserved3;    byte  reserved4;    byte  bendWheelDepth;    byte  bendWheelOffset;    byte  modulationWheel1Depth;    byte  modulationWheel1Offset;    byte  afterTouchDepth;    byte  afterTouchOffset;    byte  modulationWheel2ControllerNumber;    byte  modulationWheel2Depth;    byte  modulationWheel2Offset;    byte  footControllerControllerNumber;    byte  footControllerDepth;    byte  footControllerOffset;    byte  breathControllerControllerNumber;    byte  breathControllerDepth;    byte  breathControllerOffset;    byte  ribbonControllerControllerNumber;    byte  ribbonControllerDepth;    byte  ribbonControllerOffset;    byte  knob1ControllerNumber;    byte  knob1Depth;    byte  knob1Offset;    byte  knob2ControllerNumber;    byte  knob2Depth;
+    byte  knob2Offset;    byte  knob3ControllerNumber;    byte  knob3Depth;    byte  knob3Offset;    byte  knob4ControllerNumber;    byte  knob4Depth;    byte  knob4Offset;    byte  knob5ControllerNumber;    byte  knob5Depth;    byte  knob5Offset;    byte  knob6ControllerNumber;    byte  knob6Depth;    byte  knob6Offset;
+    
+    S1Y_PERFORMANCE_COMMON_ARPEGGIO arpeggio;
+    
+    S1Y_PERFORMANCE_COMMON_SCENE scenes[S1Y_PERFORMACE_NUMBER_OF_SCENES];
+        byte  mono;    byte  detune;    byte  volume;    byte  pan;    byte  chorusSend;    byte  reverbSend;    byte  vibratoRate;    byte  vibratoDepth;    byte  vibratoDelay;
+    byte  filterCuttoffFrequency;    byte  filterResonance;    byte  egAttackTime;    byte  egDecayTime;    byte  egReleaseTime;    byte  portamento;    byte  portamentoTime;    byte  pitchEgInitialLevel;    byte  pitchEgAttackTime;    byte  pitchEgReleaseLevel;    byte  pitchEgReleaseTime;
+  };
+  
+  //
+  // The Performance Common Block
+  //
+  
+  struct S1Y_PERFORMANCE {
+  
+    S1Y_PERFORMANCE_COMMON common;
+    S1Y_PERFORMANCE_PART parts[S1Y_NUMBER_OF_PERFORMANCE_PARTS];
+    
+  };
+  
+#endif

@@ -1,0 +1,110 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1A Keymaps
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1A Keymap structure
+//            sample headers and sample data
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1A_KEYMAP_DEF
+
+  #define S1A_KEYMAP_DEF
+
+  //
+  // Decimal constant definitions
+  //
+  
+  #define S1A_KEYMAP_HEADER_FILE_ID_LENGTH          16
+  #define S1A_KEYMAP_HEADER_RESERVED_LENGTH        112
+
+  #define S1A_NUMBER_OF_KEYMAPS 128  
+  
+  // 
+  // The S1M file header
+  //
+  
+  struct S1A_KEYMAP_HEADER {
+  
+      char   FileID[S1A_KEYMAP_HEADER_FILE_ID_LENGTH];     // The file ID for S1K files
+      ubyte  reserved[S1A_KEYMAP_HEADER_RESERVED_LENGTH];  // reserved block of zero bytes
+                                               
+  };
+  //
+  // Typedef for the keymap mode
+  //
+  
+  enum <ubyte> S1A_KEYMAP_MODE {
+    
+    S1A_KEYMAP_MODE_UNUSED  = 0x00,
+    S1A_KEYMAP_MODE_PATTERN = 0x01,
+    S1A_KEYMAP_MODE_SAMPLE  = 0x02,
+  
+  };
+  
+  //
+  // The Keymap layer structure
+  //
+  // The decoding is slightly complex as the bit usage of the bits/bytes changes depending on the keymap type
+  //
+  
+  struct S1A_KEYMAP {  
+  
+    ushort number;
+  
+    BitfieldLeftToRight(); // Change this around as we can define type first
+   
+    S1A_KEYMAP_MODE type : 2;
+    ubyte           mode : 2;
+    
+    switch ( type ) {
+      
+      case S1A_KEYMAP_MODE_PATTERN:
+        ubyte  track : 4;
+        break;
+      
+      case S1A_KEYMAP_MODE_SAMPLE:
+        ubyte  unused1    : 2;
+        ubyte  sampleBank : 2;
+        break;
+        
+      case S1A_KEYMAP_MODE_UNUSED:
+        ubyte  unused1    : 4;
+        break;
+        
+    }
+      
+    BitfieldRightToLeft(); // and reset bit field order
+    
+    switch ( type ) {
+      
+      case S1A_KEYMAP_MODE_PATTERN:
+      case S1A_KEYMAP_MODE_SAMPLE:
+        ubyte tuneCoarse;
+        ubyte tuneFine;
+        ubyte unknown;
+        break;
+      
+      case S1A_KEYMAP_MODE_UNUSED:
+        ubyte  unused2;
+        ubyte  unused3;
+        ubyte  unused4;
+        break;
+        
+    }
+      
+  };
+  
+  // 
+  // The keymaps structure
+  //
+  
+  struct S1A_KEYMAPS {
+  
+    S1A_KEYMAP keymaps[S1A_NUMBER_OF_KEYMAPS] <optimize=false>;
+    
+  };
+  
+#endif

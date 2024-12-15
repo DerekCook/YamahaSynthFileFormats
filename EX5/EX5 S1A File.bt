@@ -1,0 +1,148 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1Y File
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1A File Format which contains EX5 All Data
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+// This define allows the S1S, S1P and S1R templates to adapt accorddingly to the fact 
+// that they are being included from this S1A template
+//
+// This is required because headers and pad blocks are different in the S1A file
+// Why? Well, it's Yamaha who like to be consistently inconsistent!
+
+#ifndef S1A_FILE
+
+  #define S1A_FILE
+  
+  //
+  // Decimal constant definitions
+  //
+  
+  #define S1A_HEADER_FILE_ID_LENGTH   16
+  #define S1A_HEADER_RESERVED_LENGTH 112
+  
+  //
+  // Includes
+  //
+  
+  #include "EX5 S1A Keymap.bt"
+  
+  // 
+  // The S1A file header
+  //
+  
+  struct S1A_HEADER {
+  
+    char  FileID[S1A_HEADER_FILE_ID_LENGTH];     // The file ID for S1A files
+    ubyte reserved[S1A_HEADER_RESERVED_LENGTH];  // reserved block of zero bytes
+                                               
+  };
+  
+  // 
+  // The S1Y Sequencer content
+  //
+  
+  struct S1Y_CONTENT {
+    
+    // The Sequence Data, we can simply include the S1Y file definition
+    #include "EX5 S1Y File.bt"
+  
+  };
+  
+  // Need to define the functions seperately as we cannot define them within the struct
+  #include "EX5 S1V Functions.bt"
+  
+  // 
+  // The S1A Keymap content, these only appear in S1A files so no includes from other files here
+  //
+  
+  struct S1A_KEYMAP_CONTENT {
+    
+    S1A_KEYMAP_HEADER  s1kHeader;   
+    S1A_KEYMAPS        keymaps; 
+  
+  };
+  
+  // 
+  // The S1M Wave content
+  //
+  
+  struct S1M_CONTENT {
+    
+    // The Wave Data, we can simply include the S1M file definition
+    #include "EX5 S1M File.bt"
+  
+  };
+  
+  // Need to define the functions seperately as we cannot define them within the struct
+  #include "EX5 S1M Functions.bt"
+  
+  // 
+  // The S1S Sequencer content
+  //
+  
+  struct S1S_CONTENT {
+    
+    // The Sequence Data, we can simply include the S1S file definition
+    #include "EX5 S1S File.bt"
+  
+  };
+  
+  // 
+  // The S1P Pattern content
+  //
+  
+  struct S1P_CONTENT {
+    
+    // The Pattern Data, we can simply include the S1P file definition
+    #include "EX5 S1P File.bt"
+  
+  };
+  
+  // 
+  // The S1R Arpeggio content
+  //
+  
+  struct S1R_CONTENT {
+    
+    // The Arpeggio Data, we can simply include the S1R file definition
+    #include "EX5 S1R File.bt"
+  
+  };
+  //////////////////////////////////////////////////////////////////////////
+  // Start of the S1A template 
+  // Data is big endian, but bit fields are right to left
+  
+  BigEndian();
+  BitfieldRightToLeft();
+  
+  S1A_HEADER          s1aHeader;    
+  S1Y_CONTENT         s1yContent; // S1Y System, Performances and Voices
+  S1A_KEYMAP_CONTENT  s1aKeymaps; // S1A Keymaps
+  S1M_CONTENT         s1mContent; // S1M Waves and Samples
+  S1S_CONTENT         s1sContent; // S1S Sequencer
+  S1P_CONTENT         s1pContent; // S1P Patterns
+  S1R_CONTENT         s1rContent; // S1R Arpeggios
+  
+  //
+  // End of S1A File
+  //
+  
+#endif
+  
+  /**
+  
+  TODO
+  
+  Break the S1A file into structures, maybe also break down the sub files a little more
+  
+  S1S, S1R and S1P functions for stats?
+  
+  
+  */

@@ -1,0 +1,69 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1M Wave
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1M File Format which contains waves, wave layers
+//            sample headers and sample data
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1M_WAVE_DEF
+
+  // _DEF added to avoid name collision with stuct name
+  #define S1M_WAVE_DEF
+  
+  //
+  // Decimal constant definitions
+  //
+  
+  #define S1M_NUMBER_OF_WAVES              1024
+  #define S1M_NUMBER_OF_WAVE_LAYERS        1024
+  #define S1M_WAVE_NAME_LENGTH                8
+  #define S1M_WAVE_SIZE                      12
+  #define S1M_WAVE_LAYER_SIZE                18
+  
+  //
+  // The wave layer structure
+  //
+  
+  struct S1M_WAVE_LAYER {
+    
+    // WORD Bitfield - this data is contained in a single word
+    WORD  sampleNumber : 14;          // D00-D13 = Sample number
+    WORD  sampleBank   : 2;           // D14-D15 = sampleBank. 0 = ROM, 1 = DRAM, 2 = FLASH
+     	  ubyte volume;	  ubyte alternateGroup;	  ubyte noteLowLimit;	  ubyte noteHighLimit;	  ubyte velocityLowLimit;	  ubyte velocityHighLimit;
+     
+    // ubyte Bitfield - this data is contained in a single byte	  ubyte pan           : 7;          // D0-D6 = pan	  ubyte frequencyMode : 1;          // D7    = frequency mode. 0 = ratio, 1 = fixed
+     	  ubyte tuneCoarse;	  ubyte tuneFine;
+    
+    // Loop Mode
+    // 0x10 = Forward Loop
+    // 0x90 = Forward Loop Ex
+    // 0x50 = Forward No Loop
+    // 0x30 = Reverse No Loop
+    // 0x20 = default	  ubyte loopMode;                 
+    	  WORD  startAddressOffset; // -32768 - +32767 2's Comp	  WORD  attackLengthOffset; // -32768 - +32767 2's Comp	  WORD  looplengthOffset;   // -32768 - +32767 2's Comp
+     
+  };
+  
+  // 
+  // The wave structure
+  //
+  
+  struct S1M_WAVE {
+  
+    char  name[S1M_WAVE_NAME_LENGTH];
+    ubyte reserved1;
+    ubyte numberOfLayers;
+    ubyte reserved2;
+    ubyte category;
+    
+    S1M_WAVE_LAYER layers[numberOfLayers];
+    
+  };
+  
+#endif

@@ -1,0 +1,142 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1V Voice Element
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1V File Format which contains EX5 Voices
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1V_VOICE_ELEMENT_DEF
+
+  // _DEF added to avoid name collision with stuct name
+  #define S1V_VOICE_ELEMENT_DEF
+  
+  //
+  // Decimal constant definitions
+  //
+  
+  #define S1V_NUMBER_OF_ELEMENTS               4
+  #define S1V_TOTAL_NUMBER_OF_ELEMENTS      1024
+  #define S1V_VOICE_ELEMENT_SIZE             132
+  
+  
+  //
+  // Includes
+  //
+  
+  #include "EX5 S1V Voice Element AWM.bt"
+  #include "EX5 S1V Voice Element AN.bt"
+  #include "EX5 S1V Voice Element VL.bt"
+  
+  //
+  // The S1V Element Map Entry
+  // 
+  // The map entry provides indexs for which voice/element is using this element
+  //
+  
+  struct S1V_ELEMENT_MAP_ENTRY {
+    
+    ubyte voice;          // The voice that uses this element entry
+    ubyte elementNumber;  // The element number in the voice that uses this element entry. 
+                          // A value of 0x80 means that this element is not used
+    
+  };
+  
+  //
+  // The S1V Element Map
+  //
+  // There are 1024 elements in total in an EX5 S1V file that are shared across all voices
+  // Effectively enough elements for all Normal Voices to have four elements, but drum voices will take up more elements
+  //
+  // There is an S1V_ELEMENT_MAP_ENTRY for each element.
+  //
+  
+  struct S1V_ELEMENT_MAP {
+    
+    S1V_ELEMENT_MAP_ENTRY voiceElements[S1V_TOTAL_NUMBER_OF_ELEMENTS];  
+    
+  };
+  
+  //
+  // The S1V Voice Element Type
+  //
+  
+  enum <ubyte> VOICE_ELEMENT_TYPE {
+    
+    S1V_VOICE_ELEMENT_TYPE_AWM_PRE  = 0x00,    S1V_VOICE_ELEMENT_TYPE_AWM_RAM  = 0x40,    S1V_VOICE_ELEMENT_TYPE_AWM_FLS  = 0x80,    S1V_VOICE_ELEMENT_TYPE_DRUM_PRE = 0x03,    S1V_VOICE_ELEMENT_TYPE_DRUM_RAM = 0x23,    S1V_VOICE_ELEMENT_TYPE_DRUM_FLS = 0x43,    S1V_VOICE_ELEMENT_TYPE_VL       = 0x01,    S1V_VOICE_ELEMENT_TYPE_AN       = 0x02
+  
+  };
+  
+  //
+  // The S1V Voice Element Entry
+  //
+  
+  struct S1V_VOICE_ELEMENT {
+    
+    VOICE_ELEMENT_TYPE elementType;
+        ubyte elementVolume;    short waveNumber;
+  
+    ubyte panValue : 7;    ubyte randomPan : 1;
+  
+    switch ( elementType ) {
+      
+      case S1V_VOICE_ELEMENT_TYPE_DRUM_PRE:  
+      case S1V_VOICE_ELEMENT_TYPE_DRUM_RAM:  
+      case S1V_VOICE_ELEMENT_TYPE_DRUM_FLS:
+        ubyte outputSelect  : 4;
+        ubyte wavePlay      : 4;
+        break;
+        
+      default:
+        ubyte scalePanDepth : 4;
+        ubyte wavePlay      : 4;
+        break;
+    
+   }       ubyte tuneFine;    ubyte tuneCoarse;
+          switch ( elementType ) {
+      
+      case S1V_VOICE_ELEMENT_TYPE_DRUM_PRE:  
+      case S1V_VOICE_ELEMENT_TYPE_DRUM_RAM:  
+      case S1V_VOICE_ELEMENT_TYPE_DRUM_FLS:
+        ubyte unused1;
+        ubyte drumKey;        ubyte ignoreReceiveNoteOff;        ubyte keyAssign;        ubyte velocityLimitLow;        ubyte velocityLimitHigh;        ubyte velocityCrossFade;        ubyte expressionLimitLow;        break;
+        
+      default:
+        ubyte detune;        ubyte noteLimitLow;        ubyte noteLimitHigh;        ubyte noteCrossFade;        ubyte velocityLimitLow;        ubyte velocityLimitHigh;        ubyte velocityCrossFade;        ubyte expressionLimitLow;        break;
+        
+   }    
+    switch ( elementType ) {
+    
+      case S1V_VOICE_ELEMENT_TYPE_AWM_PRE:  
+      case S1V_VOICE_ELEMENT_TYPE_AWM_RAM:  
+      case S1V_VOICE_ELEMENT_TYPE_AWM_FLS:
+        S1V_VOICE_ELEMENT_AWM awmElementData;
+        break;  
+      
+      case S1V_VOICE_ELEMENT_TYPE_DRUM_PRE:  
+      case S1V_VOICE_ELEMENT_TYPE_DRUM_RAM:  
+      case S1V_VOICE_ELEMENT_TYPE_DRUM_FLS:
+        S1V_VOICE_ELEMENT_AWM_DRUM awmDrumElementData;      
+        break;  
+      
+      case S1V_VOICE_ELEMENT_TYPE_VL:
+        S1V_VOICE_ELEMENT_VL vlElementData;
+        break;  
+      
+      case S1V_VOICE_ELEMENT_TYPE_AN:
+        S1V_VOICE_ELEMENT_AN anElementData;
+        break;  
+      
+    }
+  
+    ubyte insertEffectSwitch : 2;
+    ubyte unused2            : 3;
+    ubyte fdspSwitch         : 1;          
+  
+  };
+  
+#endif

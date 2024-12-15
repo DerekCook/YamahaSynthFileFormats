@@ -1,0 +1,104 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1Y File
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1Y File Format which contains EX5 Voices
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1Y_FILE
+
+  #define S1Y_FILE
+  
+  //
+  // Decimal constant definitions
+  //
+  
+  #define S1Y_NUMBER_OF_PAD_BYTES     84 
+  
+  //
+  // Includes
+  //
+  
+  #include "EX5 S1Y System.bt"
+  #include "EX5 S1Y Performance.bt"
+  #include "EX5 S1V Voice Common.bt"
+  #include "EX5 S1V Voice Element.bt"
+  
+  #ifndef S1A_FILE
+  
+    #include "EX5 S1V Functions.bt"
+  
+  #endif
+  
+  //
+  // Decimal constant definitions
+  //
+  
+  #define S1Y_HEADER_FILE_ID_LENGTH   16
+  #define S1Y_HEADER_RESERVED_LENGTH 112
+  // 
+  // The S1Y file header
+  //
+  
+  struct S1Y_HEADER {
+  
+    char  FileID[S1Y_HEADER_FILE_ID_LENGTH];     // The file ID for S1M files
+    ubyte reserved[S1Y_HEADER_RESERVED_LENGTH];  // reserved block of zero bytes
+                                               
+  };
+  
+  // 
+  // Performance information
+  //
+  
+  struct S1Y_PERFORMANCES {
+
+    S1Y_PERFORMANCE performance[S1Y_NUMBER_OF_PERFORMANCES] <optimize=false>;
+
+  };
+    
+  // 
+  // Voice information
+  //
+  
+  struct S1Y_VOICES {
+    
+    S1V_ELEMENT_MAP elementMap;    
+    
+    S1V_VOICE_COMMON voiceCommon[S1V_NUMBER_OF_VOICES] <optimize=false>;
+                     
+    S1V_VOICE_ELEMENT voiceElement[S1V_TOTAL_NUMBER_OF_ELEMENTS] <optimize=false>;                      
+  
+  };
+  
+  //
+  // And the S1Y Pad bytes to the end of the file
+  //
+  
+  typedef ubyte S1Y_PAD[S1Y_NUMBER_OF_PAD_BYTES]; 
+
+  //////////////////////////////////////////////////////////////////////////
+  // Start of the S1Y template 
+  // Data is big endian, but bit fields are right to left
+  
+  BigEndian();
+  BitfieldRightToLeft();
+  
+  // The header data
+  S1Y_HEADER       header;    
+  S1Y_SYSTEM       system;  
+  S1Y_PERFORMANCES performances;
+  S1Y_VOICES       voices;
+  S1Y_PAD          s1yPad;
+  
+  //
+  // End of S1Y File
+  //
+
+#endif
+

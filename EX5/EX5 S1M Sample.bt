@@ -1,0 +1,72 @@
+//-------------------------------------------------------------------------------------------------
+//--- 010 Editor v14.0.1 Binary Template
+//
+// File:      EX5 S1M Sample
+// Author:    Derek Cook
+// Revision:  V1
+// Purpose:   Decoding of the Yamaha EX5 S1M File Format which contains waves, wave layers
+//            sample headers and sample data
+//
+// Notes:     Read this template from the bottom up! Structures need to be defined before use
+//
+//-------------------------------------------------------------------------------------------------
+
+#ifndef S1M_SAMPLE_DEF
+
+  // _DEF added to avoid name collision with stuct name
+  #define S1M_SAMPLE_DEF
+  
+  //
+  // Decimal constant definitions
+  //
+  
+  #define S1M_SAMPLE_NAME_LENGTH              8
+  #define S1M_NUMBER_OF_SAMPLES            1024
+  
+  // 
+  // The sample header structure
+  //
+  
+  struct S1M_SAMPLE_HEADER {
+  
+    char  name[S1M_SAMPLE_NAME_LENGTH];
+    ubyte category;
+    ubyte sampleType;
+    ubyte sampleLoopStartAddress[3]; // 24 bit value
+      
+    // ubyte Bitmap - this data is contained in a single byte 
+    ubyte loopFraction : 6;
+    ubyte oneShot      : 1;
+    ubyte port         : 1;
+    
+    ubyte sampleAttackLength[3]; // 24 bit value
+    
+    // ubyte Bitmap - this data is contained in a single byte
+    ubyte loopTune : 7;
+    ubyte reverse  : 1;
+    
+    ubyte sampleLoopLength[3];        // 24 bit value
+    
+    ubyte centreKey;
+    
+    ubyte sampleStartLength[3];       // 24 bit value
+    ubyte sampleReleaseLoopLength[3]; // 24 bit value
+    
+    WORD sampleNumber;                // the link to which sample this sample header is using 
+                                      // 0xffff means no sample is being used (e.g. a "NewSampl")
+  
+  };
+  
+  // 
+  // The sample block structure
+  // This is required as 010 allows duplicate structs to be defined, but not duplicate arrays
+  //
+  
+  struct S1M_SAMPLE_BLOCK (int sampleLength) {
+  
+    ubyte sampleBlock[sampleLength];
+  
+  };
+  
+ #endif
+  
