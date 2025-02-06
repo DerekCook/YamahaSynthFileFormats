@@ -1,0 +1,164 @@
+//------------------------------------------------
+//--- 010 Editor v15.0 Binary Template
+//
+//      File: DX7 Functions
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Yamaha DX7 Template
+//  Category: Synthesizers
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//
+// Checks to see if an DX7 VCED SYSEX Header is present at the current address
+//
+
+int isDx7VcedSysExMessage() {
+
+  if ( ( ReadUByte(FTell() + 0 ) == 0xf0 ) && // SYSEX Header
+       ( ReadUByte(FTell() + 1 ) == 0x43 ) && // Yamaha ID
+       ( ReadUByte(FTell() + 3 ) == 0x00 )    // Message Type
+
+      ) {
+
+    return 1;
+ 
+  } else {
+
+    return 0;
+
+  }
+
+}
+
+//
+// Checks to see if an DX7 ACED SYSEX Header is present at the current address
+//
+
+int isDx7IIAcedSysExMessage() {
+
+  if ( ( ReadUByte(FTell() + 0 ) == 0xf0 ) && // SYSEX Header
+       ( ReadUByte(FTell() + 1 ) == 0x43 ) && // Yamaha ID
+       ( ReadUByte(FTell() + 3 ) == 0x05 )    // Message Type
+
+      ) {
+
+    return 1;
+ 
+  } else {
+
+    return 0;
+
+  }
+
+}
+
+//
+// Checks to see if an DX7 VMEM SYSEX Header is present at the current address
+//
+
+int isDx7VmemSysExMessage() {
+
+  if ( ( ReadUByte(FTell() + 0 ) == 0xf0 ) && // SYSEX Header
+       ( ReadUByte(FTell() + 1 ) == 0x43 ) && // Yamaha ID
+       ( ReadUByte(FTell() + 3 ) == 0x09 )    // Message Type
+
+      ) {
+
+    return 1;
+ 
+  } else {
+
+    return 0;
+
+  }
+
+}
+
+//
+// Checks to see if an DX7 AMEM SYSEX Header is present at the current address
+//
+
+int isDx7IIAmemSysExMessage() {
+
+  if ( ( ReadUByte(FTell() + 0 ) == 0xf0 ) && // SYSEX Header
+       ( ReadUByte(FTell() + 1 ) == 0x43 ) && // Yamaha ID
+       ( ReadUByte(FTell() + 3 ) == 0x06 )    // Message Type
+
+      ) {
+
+    return 1;
+ 
+  } else {
+
+    return 0;
+
+  }
+
+}
+
+//
+// Checks to see if an DX7 PMEM SYSEX Header is present at the current address
+//
+
+int isDx7IIPmemSysExMessage() {
+
+  if ( ( ReadUByte(FTell() +  0 ) == 0xf0 ) && // SYSEX Header
+       ( ReadUByte(FTell() +  1 ) == 0x43 ) && // Yamaha ID
+       ( ReadUByte(FTell() +  3 ) == 0x7e ) && // Message Type
+       ( ReadUByte(FTell() +  6 ) == 'L'  ) && // Message Identifier String
+       ( ReadUByte(FTell() +  7 ) == 'M'  ) && // Message Identifier String
+       ( ReadUByte(FTell() +  8 ) == ' '  ) && // Message Identifier String
+       ( ReadUByte(FTell() +  9 ) == ' '  ) && // Message Identifier String
+       ( ReadUByte(FTell() + 10 ) == '8'  ) && // Message Identifier String
+       ( ReadUByte(FTell() + 11 ) == '9'  ) && // Message Identifier String
+       ( ReadUByte(FTell() + 12 ) == '7'  ) && // Message Identifier String
+       ( ReadUByte(FTell() + 13 ) == '3'  ) && // Message Identifier String
+       ( ReadUByte(FTell() + 14 ) == 'P'  ) && // Message Identifier String
+       ( ReadUByte(FTell() + 15 ) == 'M'  )    // Message Identifier String
+
+      ) {
+
+    return 1;
+ 
+  } else {
+
+    return 0;
+
+  }
+
+}
+//
+// Function to check for voice bank select
+//
+
+int isDx7IIVoiceBankSysExMessage() {
+
+  if ( ( ReadUByte(FTell() + 0 ) == 0xf0 ) && // SYSEX Header
+       ( ReadUByte(FTell() + 1 ) == 0x43 ) && // Yamaha ID
+       ( ReadUByte(FTell() + 3 ) == 0x19 ) && // Message Type
+       ( ReadUByte(FTell() + 4 ) == 0x4d )    // Message Type
+
+      ) {
+
+    return 1;
+ 
+  } else {
+
+    return 0;
+
+  }
+
+}
+
+//
+// Function for displaying the message length
+//
+
+string DX7_SYSEX_MESSSAGE_LENGTH_READ( DX7_SYSEX_MESSSAGE_LENGTH length ) {
+   
+  return Str("%d", ( ( ( length & 0x7f00 ) >> 1) | ( length & 0x7f ) ) );
+
+}

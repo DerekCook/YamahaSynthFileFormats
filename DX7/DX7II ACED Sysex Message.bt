@@ -1,0 +1,91 @@
+//------------------------------------------------
+//--- 010 Editor v15.0 Binary Template
+//
+//      File: DX7 ACED Sysex Message.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Yamaha DX7 Template
+//  Category: Synthesizers
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//
+// DX7 AMEM VOICE
+//
+
+typedef struct {
+
+	ubyte op6ScalingMode;
+	ubyte op5ScalingMode;
+	ubyte op4ScalingMode;
+	ubyte op3ScalingMode;
+	ubyte op2ScalingMode;
+	ubyte op1ScalingMode;
+	ubyte op6AmplitudeModulationSensitivity;
+	ubyte op5AmplitudeModulationSensitivity;
+	ubyte op4AmplitudeModulationSensitivity;
+	ubyte op3AmplitudeModulationSensitivity;
+	ubyte op2AmplitudeModulationSensitivity;
+	ubyte op1AmplitudeModulationSensitivity;
+	ubyte pitchEGRange;
+	ubyte lfoKeyTrigger;
+	ubyte pitchEGByVelocity;
+	ubyte randomPitchFluctuation;
+	ubyte voiceMode;
+	ubyte pitchBendRange;
+	ubyte pitchBendStep;
+	ubyte pitchBendMode;
+	ubyte portamentoMode;
+	ubyte portamentoStep;
+	ubyte portamentoTime;
+	ubyte modWheelPitchModRange;
+	ubyte modWheelAmplitudeModulationRange;
+	ubyte modWheelEGBiasRange;
+	ubyte footController1PitchModRange;
+	ubyte footController1AmplitudeModulationRange;
+	ubyte footController1EGBiasRange;
+	ubyte footController1VolumeRange;
+	ubyte breathControllerPitchModRange;
+	ubyte breathControllerAmplitudeModulationRange;
+	ubyte breathControllerEGBiasRange;
+	ubyte breathControllerPitchBiasRange;
+	ubyte afterTouchPitchModRange;
+	ubyte afterTouchAmplitudeModulationRange;
+	ubyte afterTouchEGBiasRange;
+	ubyte afterTouchPitchBiasRange;
+	ubyte pitchEGRateScalingDepth;
+	ubyte reserved[25];
+	ubyte footController2PitchModRange;
+	ubyte footController2AmplitudeModulationRange;
+	ubyte footController2EGBiasRange;
+	ubyte footController2VolumeRange;
+	ubyte midiControlPitchModRange;
+	ubyte midiControlAmplitudeModulationRange;
+	ubyte midiControlEGBiasRange;
+	ubyte midiControlVolumeRange;
+	ubyte unisonDetune;
+	ubyte footControl;
+    
+} DX7II_ACED_VOICE;
+
+//
+// DX7 ACED Message
+//
+
+typedef struct {
+    
+  DX7_SYSEX_START           sysexStart           <format=hex>;
+  DX7_SYSEX_MANUFACTURER_ID sysexManufacturerId  <format=hex>;
+  DX7_SYSEX_DEVICE_ID       deviceId    : 4;
+  DX7_SYSEX_SUBSTATUS       messageType : 4;
+  DX7_SYSEX_FORMAT          formatId;
+  DX7_SYSEX_MESSSAGE_LENGTH messageLength        <read=DX7_SYSEX_MESSSAGE_LENGTH_READ>;
+  
+  DX7II_ACED_VOICE          voice;
+
+  DX7_SYSEX_CHECKSUM        checksum            <format=hex>;
+  DX7_SYSEX_END             sysexEnd            <format=hex>;
+    
+} DX7II_ACED_SYSEX_MESSAGE;

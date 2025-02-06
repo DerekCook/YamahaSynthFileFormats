@@ -1,0 +1,90 @@
+//------------------------------------------------
+//--- 010 Editor v15.0 Binary Template
+//
+//      File: DX7
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Yamaha DX7 Template
+//  Category: Synthesizers
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//
+// Includes
+//
+
+#include "DX7 Definitions.bt"
+#include "DX7 Functions.bt"
+#include "DX7 VCED Sysex Message.bt"
+#include "DX7 VMEM Sysex Message.bt"
+#include "DX7II ACED Sysex Message.bt"
+#include "DX7II AMEM Sysex Message.bt"
+#include "DX7II PMEM Sysex Message.bt"
+#include "DX7II Voice Bank Select Sysex Message.bt"
+
+//
+// The File
+//
+
+BigEndian();
+BitfieldRightToLeft();
+
+local int messageCount;
+
+// Scan through the file
+while( !FEof() ) {
+
+  if ( isDx7VcedSysExMessage() > 0 ) {
+  
+    Printf("DX7   VCED Message Found at Message %d\n",messageCount);
+    
+    DX7_VCED_SYSEX_MESSAGE message;
+  
+  } else if ( isDx7VmemSysExMessage() > 0 ) {
+      
+    Printf("DX7   VMEM Message Found at Message %d\n",messageCount);
+      
+    DX7_VMEM_SYSEX_MESSAGE message;
+    
+  } else if ( isDx7IIAcedSysExMessage() > 0 ) {
+      
+    Printf("DX7II ACED Message Found at Message %d\n",messageCount);
+      
+    DX7II_ACED_SYSEX_MESSAGE message;
+
+  } else if ( isDx7IIAmemSysExMessage() > 0 ) {
+      
+    Printf("DX7II AMEM Message Found at Message %d\n",messageCount);
+      
+     DX7II_AMEM_SYSEX_MESSAGE message;
+
+  } else if ( isDx7IIVoiceBankSysExMessage() > 0 ) {
+      
+    Printf("DX7II Voice Bank Select Message Found at Message %d\n",messageCount);
+      
+    DX7II_VOICE_BANK_SELECT_SYSEX_MESSAGE message;
+    
+  } else if ( isDx7IIPmemSysExMessage() > 0 ) {
+      
+    Printf("DX7II Performance Bank Message Found at Message %d\n",messageCount);
+    
+    DX7II_PMEM_SYSEX_MESSAGE message;
+      
+  } else {
+    
+    Printf("*** UNKNOWN MESSAGE at %8.8x\n",FTell());
+    break;
+        
+  }
+  
+  messageCount += 1;
+    
+}
+
+Printf("%d Messages Found\n",messageCount);
+
+
+
+

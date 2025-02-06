@@ -1,0 +1,58 @@
+//------------------------------------------------
+//--- 010 Editor v15.0 Binary Template
+//
+//      File: DX7 Enumerations
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Yamaha DX7 Template
+//  Category: Synthesizers
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+// 
+// Defines
+//
+
+#define DX7_NUMBER_OF_OPERATORS            6
+#define DX7_VOICE_NAME_LENGTH             10
+#define DX7_VMEM_NUMBER_OF_VOICES         32
+
+#define DX7II_CLASSIFICATION_NAME_LENGTH  10
+#define DX7II_PERFORMANCE_NAME_LENGTH     20
+#define DX7II_PMEM_NUMBER_OF_PERFORMANCES 32
+
+//
+// FORMAT ID
+//
+
+typedef enum <ubyte> { 
+  
+  VCED                  = 0x00,
+  VMEM                  = 0x09,
+  ACED                  = 0x05,
+  AMEM                  = 0x06,
+  PERFORMANCE_PARAMETER = 0x19,
+  UNIVERSAL             = 0x7e
+  
+} DX7_SYSEX_FORMAT;
+
+//
+// SUBSTATUS
+//
+
+typedef enum <ubyte>  { 
+  
+  BULK_DUMP         = 0x00,
+  BULK_DUMP_REQUEST = 0x02,
+  
+} DX7_SYSEX_SUBSTATUS;
+
+typedef ubyte  DX7_SYSEX_START;
+typedef ubyte  DX7_SYSEX_DEVICE_ID;
+typedef ubyte  DX7_SYSEX_MANUFACTURER_ID;
+typedef ushort DX7_SYSEX_MESSSAGE_LENGTH;
+typedef ubyte  DX7_SYSEX_CHECKSUM;
+typedef ubyte  DX7_SYSEX_END; 
+typedef char   DX7II_CLASSIFICATION_NAME; 

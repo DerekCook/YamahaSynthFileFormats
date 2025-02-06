@@ -1,0 +1,117 @@
+//------------------------------------------------
+//--- 010 Editor v15.0 Binary Template
+//
+//      File: DX7 AMEM Sysex Message.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Yamaha DX7 Template
+//  Category: Synthesizers
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//
+// DX7 AMEM VOICE
+//
+
+typedef struct {
+
+	ubyte op6ScalingMode : 1;
+	ubyte op5ScalingMode : 1;
+	ubyte op4ScalingMode : 1;
+	ubyte op3ScalingMode : 1;
+	ubyte op2ScalingMode : 1;
+	ubyte op1ScalingMode : 1;
+  ubyte unused1        : 2;
+  
+	ubyte op6AmplitudeModulationSensitivity : 3;
+	ubyte op5AmplitudeModulationSensitivity : 3;
+  ubyte unused2                           : 2;
+
+	ubyte op4AmplitudeModulationSensitivity : 3;
+	ubyte op3AmplitudeModulationSensitivity : 3;
+  ubyte unused3                           : 2;
+
+	ubyte op2AmplitudeModulationSensitivity : 3;
+	ubyte op1AmplitudeModulationSensitivity : 3;
+  ubyte unused4                           : 2;
+  
+	ubyte pitchEGRange           : 2;
+	ubyte lfoKeyTrigger          : 1;
+	ubyte pitchEGByVelocity      : 1;
+	ubyte randomPitchFluctuation : 3;
+  ubyte unused5                : 1;
+
+	ubyte voiceMode       : 2;
+	ubyte pitchBendRange  : 4;
+  ubyte unused6         : 2;
+  
+	ubyte pitchBendStep : 4;
+	ubyte pitchBendMode : 2;
+  ubyte unused7       : 2;
+  
+	ubyte portamentoMode : 1;
+	ubyte portamentoStep : 4;
+  ubyte unused8        : 3;
+  
+	ubyte portamentoTime;
+
+	ubyte modWheelPitchModRange;
+	ubyte modWheelAmplitudeModulationRange;
+	ubyte modWheelEGBiasRange;
+
+	ubyte footController1PitchModRange;
+	ubyte footController1AmplitudeModulationRange;
+	ubyte footController1EGBiasRange;
+	ubyte footController1VolumeRange;
+
+	ubyte breathControllerPitchModRange;
+	ubyte breathControllerAmplitudeModulationRange;
+	ubyte breathControllerEGBiasRange;
+	ubyte breathControllerPitchBiasRange;
+
+	ubyte afterTouchPitchModRange;
+	ubyte afterTouchAmplitudeModulationRange;
+	ubyte afterTouchEGBiasRange;
+	ubyte afterTouchPitchBiasRange;
+
+	ubyte pitchEGRateScalingDepth;
+
+	ubyte reserved;
+
+	ubyte footController2PitchModRange;
+	ubyte footController2AmplitudeModulationRange;
+	ubyte footController2EGBiasRange;
+	ubyte footController2VolumeRange;
+
+	ubyte midiControlPitchModRange;
+	ubyte midiControlAmplitudeModulationRange;
+	ubyte midiControlEGBiasRange;
+	ubyte midiControlVolumeRange;
+
+	ubyte unisonDetune : 3;
+	ubyte footControl  : 1;
+  ubyte unused9      : 4;
+    
+} DX7II_AMEM_VOICE;
+
+//
+// DX7 AMEM Message
+//
+
+typedef struct {
+    
+  DX7_SYSEX_START           sysexStart           <format=hex>;
+  DX7_SYSEX_MANUFACTURER_ID sysexManufacturerId  <format=hex>;
+  DX7_SYSEX_DEVICE_ID       deviceId    : 4;
+  DX7_SYSEX_SUBSTATUS       messageType : 4;
+  DX7_SYSEX_FORMAT          formatId;
+  DX7_SYSEX_MESSSAGE_LENGTH messageLength       <read=DX7_SYSEX_MESSSAGE_LENGTH_READ>;
+    
+  DX7II_AMEM_VOICE          voice[DX7_VMEM_NUMBER_OF_VOICES];
+
+  DX7_SYSEX_CHECKSUM        checksum            <format=hex>;
+  DX7_SYSEX_END             sysexEnd            <format=hex>;
+    
+} DX7II_AMEM_SYSEX_MESSAGE;

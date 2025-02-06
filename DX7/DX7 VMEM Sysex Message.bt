@@ -1,0 +1,122 @@
+//------------------------------------------------
+//--- 010 Editor v15.0 Binary Template
+//
+//      File: DX7 VMEM Sysex Message.bt
+//   Authors: Derek Cook
+//   Version: 0.1
+//   Purpose: Yamaha DX7 Template
+//  Category: Synthesizers
+// File Mask: 
+//  ID Bytes: 
+//   History: 
+//------------------------------------------------
+
+//
+// DX7 VMEM Operator
+//
+
+typedef struct {
+  
+	ubyte rate1;
+	ubyte rate2;
+	ubyte rate3;
+	ubyte rate4;
+	ubyte level1;
+	ubyte level2;
+	ubyte level3;
+	ubyte level4;
+	ubyte breakPoint;
+	ubyte leftDepth;
+	ubyte rightDepth;
+
+	ubyte leftCurve  : 2;
+	ubyte rightCurve : 2;
+  ubyte unused1    : 4;
+  
+	ubyte rateScaling : 3;
+	ubyte pitchDetune : 4;
+  ubyte unused2     : 1;
+  
+	ubyte amplitudeModulationSensitivity : 2;
+	ubyte touchSensitivity               : 3;
+  ubyte unused3                        : 3;
+  
+	ubyte totalLevel;
+  
+	ubyte frequencyMode    : 1;
+	ubyte frequencyCoarse  : 5;
+  ubyte unused4          : 1;
+  
+	ubyte frequencyFine;
+
+} DX7_VMEM_OPERATOR;
+
+//
+// DX7 VMEM VOICE COMMON
+//
+
+typedef struct {
+  
+	ubyte             pitchEgRate1;
+	ubyte             pitchEgRate2;
+	ubyte             pitchEgRate3;
+	ubyte             pitchEgRate4;
+	ubyte             pitchEgLevel1;
+	ubyte             pitchEgLevel2;
+	ubyte             pitchEgLevel3;
+	ubyte             pitchEgLevel4;
+  
+	ubyte             algorithm : 5;
+	ubyte             unused1   : 3;
+  
+  ubyte             feedback            : 3;
+	ubyte             oscillatorPhaseInit : 1;
+	ubyte             unused2             : 4;
+	
+  ubyte             lfoSpeed;
+	ubyte             lfoDelay;
+	ubyte             lfoPitchModulationDepth;
+	ubyte             lfoAmplitudeModulationDepth;
+	
+  ubyte             lfoKeySync                     : 1;
+	ubyte             lfoWaveForm                    : 3;
+	ubyte             lfoPitchModulationSensitivity  : 3;
+	ubyte             unused3                        : 1;
+	
+  ubyte             transpose;
+  
+  char              name[DX7_VOICE_NAME_LENGTH];
+  
+} DX7_VMEM_VOICE_COMMON;
+
+
+//
+// DX7 VMEM VOICE
+//
+
+typedef struct {
+  
+  DX7_VMEM_OPERATOR     operators[DX7_NUMBER_OF_OPERATORS];
+  DX7_VMEM_VOICE_COMMON voiceCommon;
+
+} DX7_VMEM_VOICE;
+
+//
+// DX7 VMEM Message
+//
+
+typedef struct {
+    
+  DX7_SYSEX_START           sysexStart           <format=hex>;
+  DX7_SYSEX_MANUFACTURER_ID sysexManufacturerId  <format=hex>;
+  DX7_SYSEX_DEVICE_ID       deviceId    : 4;
+  DX7_SYSEX_SUBSTATUS       messageType : 4;
+  DX7_SYSEX_FORMAT          formatId;
+  DX7_SYSEX_MESSSAGE_LENGTH messageLength       <read=DX7_SYSEX_MESSSAGE_LENGTH_READ>;
+    
+  DX7_VMEM_VOICE            voice[DX7_VMEM_NUMBER_OF_VOICES];
+
+  DX7_SYSEX_CHECKSUM        checksum            <format=hex>;
+  DX7_SYSEX_END             sysexEnd            <format=hex>;
+    
+} DX7_VMEM_SYSEX_MESSAGE;
